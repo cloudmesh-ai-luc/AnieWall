@@ -1,5 +1,10 @@
 # W2.4 - Local Virtual Machine Using Microsoft Hyper-V
 
+**Author:** Stephanie Wallace  
+**Loyola Email:** swallace6@luc.edu  
+**GitHub ID:** AnieWall
+
+
 ## Overview
 
 For this assignment, I created a local Ubuntu Server virtual machine on my Windows laptop using Microsoft Hyper-V.
@@ -29,21 +34,66 @@ Because my laptop has only 8 GB of physical memory and a dual-core processor, I 
 
 ## Prerequisites
 
-Before creating the VM, I verified that the following software was available:
+I used the following software and resources for this tutorial:
 
-1. Windows 10 Pro
-2. Microsoft Hyper-V
-3. Git Bash
-4. Ubuntu Server 24.04 LTS ISO image
-5. At least 20 GB of available disk space
+| Requirement | What I Used |
+| --- | --- |
+| Host operating system | Windows 10 Pro |
+| Terminal | Git Bash |
+| Hypervisor | Microsoft Hyper-V |
+| Guest operating system | Ubuntu Server 24.04 LTS |
+| VM disk allocation | 20 GB |
+| VM startup memory | 2048 MB |
+| Virtual processors | 1 |
 
-I verified Git Bash from PowerShell with:
+Before beginning, download or verify the required software using the official resources listed below.
+
+## Required Resources
+
+- Git for Windows: https://git-scm.com/install/windows
+- Course Git Bash instructions: https://github.com/cloudmesh-ai/cloudmesh-ai-lecture/blob/main/docs/section/linux/gitbash.md
+- Microsoft Hyper-V: https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/install-hyper-v?tabs=powershell&pivots=windows 
+- Ubuntu Server 24.04 LTS: https://ubuntu.com/download/server
+- Virtualization concepts: https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/lecture/cloud/virtualization/
+
+
+## Install and Configure Git Bash
+
+Git Bash is included with Git for Windows.
+
+1. Open the official Git for Windows download page.
+2. Download the Windows installer.
+3. Open the downloaded `.exe` file.
+4. Approve the Windows User Account Control prompt if it appears.
+5. Continue through the installer. I used the recommended/default options.
+6. Complete the installation and launch Git Bash.
+
+Verify the installation with:
+
+```bash
+git --version
+```
+
+Git also needs an identity associated with commits. I configured my name and Loyola email using:
+
+```bash
+git config --global user.name "Stephanie Wallace"
+git config --global user.email "swallace6@luc.edu"
+```
+
+The configuration can be verified with:
+
+```bash
+git config --global --list
+```
+
+On my Windows computer I also confirmed the Git Bash executable existed using PowerShell:
 
 ```powershell
 Test-Path "C:\Program Files\Git\git-bash.exe"
 ```
 
-The command returned:
+The result was:
 
 ```text
 True
@@ -51,21 +101,40 @@ True
 
 ## Enable Microsoft Hyper-V
 
-Hyper-V was already enabled on my computer.
+Microsoft Hyper-V is included as an optional Windows feature on supported editions of Windows 10 Pro and Windows 11 Pro, so a separate Hyper-V installer is not required.
 
-On Windows 10 Pro, Hyper-V can be enabled using:
+On Windows 10 Pro, Hyper-V can be enabled through the graphical interface:
 
-**Control Panel > Programs > Turn Windows features on or off > Hyper-V**
+1. Open **Start**.
+2. Open **Settings**.
+3. Select **Apps > Apps & features**.
+4. Select **Programs and Features**.
+5. Select **Turn Windows features on or off**.
+6. Check **Hyper-V**.
+7. Click **OK**.
+8. Restart Windows if prompted.
 
-After selecting Hyper-V, Windows may require a restart.
-
-It can also be enabled from an Administrator PowerShell terminal with:
+Hyper-V can alternatively be enabled from an Administrator PowerShell terminal:
 
 ```powershell
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
 ```
 
-After installation, I opened **Hyper-V Manager** from the Windows Start menu.
+After installation, search for and open **Hyper-V Manager** from the Windows Start menu.
+
+On my computer, Hyper-V had already been enabled before I began the VM installation.
+
+## Download Ubuntu Server
+
+I used Ubuntu Server 24.04 LTS as the guest operating system.
+
+1. Open the official Ubuntu Server download page.
+2. Locate the supported Ubuntu 24.04 LTS Server release.
+3. Download the 64-bit AMD64 server ISO.
+4. Save the ISO somewhere easy to locate, such as the Windows Downloads folder.
+5. Do not extract the ISO. Hyper-V uses the ISO directly as a virtual installation DVD.
+
+The ISO is later selected during VM creation under the option to install an operating system from a bootable image file.
 
 ## Create the Ubuntu Virtual Machine
 
@@ -141,6 +210,7 @@ The screenshot below shows a successful login to the Ubuntu VM and a command exe
 
 ![Successful Ubuntu VM Login](vm-login.png)
 
+
 ## System-Specific Quirks and Problems
 
 ### Limited Host Resources
@@ -197,7 +267,7 @@ This helped me connect local virtualization to cloud computing. Infrastructure a
 
 My `lscpu` output also identified Microsoft as the hypervisor vendor and reported the virtualization type as `full`, which provided direct evidence that Ubuntu was running inside a virtualized environment.
 
-## Contribution
+## Contributing 
 
 If I discover an error or outdated instruction in the official Cloud Computing lecture notes, I can contribute a correction instead of creating a separate competing tutorial.
 
@@ -210,4 +280,8 @@ The general contribution process is:
 5. Commit the changes with a clear commit message.
 6. Push the branch to GitHub.
 7. Open a pull request explaining the problem and the proposed correction.
+
+The official Cloud Computing lecture-notes repository is:
+
+https://github.com/cloudmesh-ai/cloudmesh-ai-lecture
 
