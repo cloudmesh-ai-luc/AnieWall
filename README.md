@@ -1,6 +1,6 @@
-Git-ID -> # AnieWall
+Git-ID -> AnieWall
 
-*  Accounts: https://piazza.com/class/mt5rkdsycb31c3/post/12
+*  Accounts: [https://piazza.com/class/mt5rkdsycb31c3/post/12]
 
 Note:
 *  put files in `<repor>/assignments/week3/`
@@ -74,7 +74,7 @@ Note:
 
 
 * [ ] Assignment W2.5: Project proposal (Due Sep 10, 2026, 9am)
-  * [ ] Start working towards a project proposal and fill out administrative fields and text. [LINK]
+  * [ ] Start working towards a project proposal and fill out administrative fields and text. [https://github.com/cloudmesh-ai-luc/AnieWall/blob/main/project.md]
 
 
 # Week 1
@@ -87,15 +87,15 @@ Note:
   * [ ] Review all sections under LECTURES -> INTRODUCTIONS and post questions on Piazza.
 
 
-* [ ] Assignment W1.3: Look over the assignment sections (Past Due)
-  * [ ] Review all sections under ASSIGNMENTS (Overview and weekly sections).
+* [x] Assignment W1.3: Look over the assignment sections (Past Due)
+  * [x] Review all sections under ASSIGNMENTS (Overview and weekly sections).
 
 
-* [ ] Assignment W1.4: Create class accounts (Past Due)
-  * [ ] Create an account on access-ci.org.
-  * [ ] Create an account on chameleoncloud.org.
-  * [ ] Set up a GitHub account.
-  * [ ] Post account information to Piazza under the accounts category. [LINK]
+* [x] Assignment W1.4: Create class accounts (Past Due)
+  * [x] Create an account on access-ci.org.
+  * [x] Create an account on chameleoncloud.org.
+  * [x] Set up a GitHub account.
+  * [x] Post account information to Piazza under the accounts category. [https://piazza.com/class/mt5rkdsycb31c3/post/12]
 
 
 * [x] Assignment W1.5: Work ahead: Refresh knowledge about Python and Linux (Past Due)
