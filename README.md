@@ -44,10 +44,10 @@ Note:
 
 ## Week 2
   
-* [ ] Assignment W2.1: Google Account, Piazza Account post cleanup (Due Sep 10, 2026, 9am)
-  * [ ] Locate your account post in Piazza and add your google account.
-  * [ ] Correct your Chameleon ID to the registered email.
-  * [ ] Fix your subject line to `Firstname Lastname (lucid@luc.edu)`.
+* [x] Assignment W2.1: Google Account, Piazza Account post cleanup (Due Sep 10, 2026, 9am)
+  * [x] Locate your account post in Piazza and add your google account.
+  * [x] Correct your Chameleon ID to the registered email.
+  * [x] Fix your subject line to `Firstname Lastname (lucid@luc.edu)`.
 
 
 * [ ] Assignment W2.2: GitHub Repository (Due Sep 10, 2026, 9am)
@@ -65,26 +65,26 @@ Note:
   * [ ] Submit to `/assignments/week2/backup.md`. [LINK]
 
 
-* [ ] Assignment W2.4: Local VM (Due Sep 10, 2026, 9am)
-  * [ ] Windows: Install a terminal on Windows (Git Bash/WSL). [Which OS do you have?
-  * [ ] Pick a hypervisor (VirtualBox, VMware, Hyper-V, Multipass). [Which?]
-  * [ ] Create and start a minimal VM (e.g., Ubuntu 22.04).
-  * [ ] Capture proof of login with a terminal screenshot (≤ 800×600 px) showing your prompt and a command.
-  * [ ] Write/update the tutorial in `assignments/week1/local-vm.md` and save the screenshot as `assignments/week1/vm-login.png`. [LINK/s]
+* [x] Assignment W2.4: Local VM (Due Sep 10, 2026, 9am)
+  * [x] Windows: Install a terminal on Windows (Git Bash/WSL). [Which OS do you have?
+  * [x] Pick a hypervisor (VirtualBox, VMware, Hyper-V, Multipass). [Which?]
+  * [x] Create and start a minimal VM (e.g., Ubuntu 22.04).
+  * [x] Capture proof of login with a terminal screenshot (≤ 800×600 px) showing your prompt and a command.
+  * [x] Write/update the tutorial in `assignments/week1/local-vm.md` and save the screenshot as `assignments/week1/vm-login.png`. [LINK/s]
 
 
-* [ ] Assignment W2.5: Project proposal (Due Sep 10, 2026, 9am)
-  * [ ] Start working towards a project proposal and fill out administrative fields and text. [https://github.com/cloudmesh-ai-luc/AnieWall/blob/main/project.md]
+* [x] Assignment W2.5: Project proposal (Due Sep 10, 2026, 9am)
+  * [x] Start working towards a project proposal and fill out administrative fields and text. [https://github.com/cloudmesh-ai-luc/AnieWall/blob/main/project.md]
 
 
 # Week 1
 
-  * [ ] Assignment W1.1: What hardware do you have? (Past Due) [LINK]
-  * [ ] Fill out the LUC Hardware Questionnaire.
+  * [x] Assignment W1.1: What hardware do you have? (Past Due) [LINK]
+  * [x] Fill out the LUC Hardware Questionnaire.
 
 
-* [ ] Assignment W1.2: Lecture review (Past Due)
-  * [ ] Review all sections under LECTURES -> INTRODUCTIONS and post questions on Piazza.
+* [x] Assignment W1.2: Lecture review (Past Due)
+  * [x] Review all sections under LECTURES -> INTRODUCTIONS and post questions on Piazza.
 
 
 * [x] Assignment W1.3: Look over the assignment sections (Past Due)
