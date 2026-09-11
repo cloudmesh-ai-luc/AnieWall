@@ -42,8 +42,17 @@ During this check, I will:
 
 For major assignments or projects, I will also back up important changes immediately rather than waiting until the weekly schedule.
 
-## 5. Real-World Consequences From My Professional Experience
+## 5. Real-World Consequences Applying to Others
 
+### GitLab Database Backup Incident - 2017
+
+In January 2017, GitLab experienced a major cloud-service outage after production database data was accidentally deleted. The company discovered that several backup and replication methods it expected to rely on were either unavailable or not functioning reliably. GitLab ultimately restored the database from a copy that was approximately six hours old, which meant that some projects, comments, user accounts, issues, and other database changes created during that period were permanently lost.
+
+This incident could have been reduced or avoided through regularly tested backups, continuous monitoring of backup jobs, multiple independent recovery copies, and documented restoration procedures. GitLab later identified improvements such as backup monitoring, hourly snapshots, point-in-time recovery, and automated testing of database restoration procedures.
+
+**Source:** GitLab, *Postmortem of database outage of January 31*, 2017.
+
+## Additional Professional Example
 ### TV Anywhere Africa and the 2024 West African Subsea Cable Outage
 
 One of the strongest examples of the importance of backup, redundancy, and disaster recovery comes from my own professional experience at TV Anywhere Africa in Ghana.
@@ -62,25 +71,27 @@ From my experience at TV Anywhere, we were eventually able to obtain additional 
 
 Interestingly, MainOne's recovery took approximately eight weeks.
 
-## What I Learned From the Incident
+## Lessons Learned
 
-This experience changed how I understand backup and disaster recovery.
+The two incidents show that protecting digital systems requires more than simply creating copies of data.
 
-A traditional backup protects a copy of data, but that alone is not enough to keep a production cloud service available. An organization may still have its data and yet be unable to serve customers because the network, data center, or other infrastructure required to reach that data is unavailable.
+The GitLab incident demonstrates that a backup is only useful if it is working, monitored, and regularly tested. An organization may believe it has a recovery plan, but failed backup jobs or untested restoration procedures can still result in permanent data loss. Multiple independent backup copies, frequent snapshots, monitoring, and periodic recovery testing can greatly reduce this risk.
 
-The incident demonstrated several important principles:
+My experience at TV Anywhere Africa highlighted a different but related problem. Even when data is not permanently lost, a service can still become unavailable if the infrastructure or network needed to reach that data fails. The MainOne outage showed why alternative network capacity, geographically diverse infrastructure, and tested failover procedures are important for maintaining service availability.
 
-- **Avoid single points of failure.** Depending heavily on one provider can cause a major outage when that provider becomes unavailable.
-- **Redundancy must be physically diverse.** Two providers are not truly independent if their traffic ultimately depends on the same geographic cable routes.
-- **Alternative capacity should be planned before a disaster.** Arranging emergency capacity during an active outage takes time.
-- **Backups must include service recovery.** Organizations should plan not only how to recover data, but also how to restore applications, networking, and customer access.
-- **Failover procedures must be tested.** A secondary data center, cloud environment, or network route is most useful when an organization already knows how to move production services to it.
+From these examples, I learned that an effective cloud resilience strategy should address four questions:
 
-A stronger architecture would therefore include geographically separated backups, replication to a secondary environment, independent network paths, alternative providers, and a tested disaster-recovery procedure.
+1. **Is the data backed up?**
+2. **Can the backup actually be restored?**
+3. **Can the application continue operating if the primary infrastructure fails?**
+4. **How quickly can the complete service be recovered?**
 
-The incident showed me personally that resilience in cloud computing is not simply about asking, **"Do we have a backup?"** A more important question is, **"If our primary environment fails today, how quickly can we restore the complete service somewhere else?"**
+This distinction helped me understand that backup, disaster recovery, and high availability are related but different concepts. Backup protects data, disaster recovery focuses on restoring systems after a failure, and high availability reduces service interruption when infrastructure fails.
 
 ## Sources
 
-- Ghana National Communications Authority, updates on the March 2024 undersea cable disruptions.
-- MTN Group / Bayobab, updates on restoration and alternative international capacity during the March 2024 outage.
+- GitLab. *Postmortem of database outage of January 31*. February 10, 2017.
+- Ghana National Communications Authority. *Update 2: Undersea Cable Disruptions Affect Data Services*. March 14, 2024.
+- Ghana National Communications Authority. *Update 3: Undersea Cable Disruptions Affect Data Services*. March 15, 2024.
+- Bayobab Group. *Updated Statement: International Subsea Cable Break*. March 19, 2024.
+- Ghana National Communications Authority. *Update 7: Repair Works on All Undersea Cable Cuts Completed as of May 8, 2024*. May 22, 2024.
