@@ -50,31 +50,33 @@ Note:
   * [x] Fix your subject line to `Firstname Lastname (lucid@luc.edu)`.
 
 
-* [ ] Assignment W2.2: GitHub Repository (Due Sep 10, 2026, 9am)
-  * [ ] Verify that you can write into a file in your assigned GitHub repository.
-  * [ ] Put something useful into the README such as your first and last name. [LINK]
-  * [ ] Upload your public key. [LINK]
+* [x] Assignment W2.2: GitHub Repository (Due Sep 10, 2026, 9am)
+  * [x] Verify that you can write into a file in your assigned GitHub repository.
+  * [x] Put something useful into the README such as your first and last name. [https://github.com/cloudmesh-ai-luc/AnieWall/blob/main/README.md]
+  * [x] Upload your public key. [Public SSH Key] [https://github.com/AnieWall.keys]
 
 
-* [ ] Assignment W2.3: Backup Your Computer (Due Sep 10, 2026, 9am)
-  * [ ] Write a one‑paragraph explanation (4–6 sentences) on why backing up a computer is important. 
-  * [ ] List three real‑world consequences of not having a backup.
-  * [ ] Choose one backup method and outline the setup steps.
-  * [ ] Create a weekly backup schedule (day, time, what to back up).
-  * [ ] Research an example from cloud computing where a missing backup strategy led to issues and write a short incident case.
-  * [ ] Submit to `/assignments/week2/backup.md`. [LINK]
+* [x] Assignment W2.3: Backup Your Computer (Due Sep 10, 2026, 9am)
+  * [x] Write a one‑paragraph explanation (4–6 sentences) on why backing up a computer is important. 
+  * [x] List three real‑world consequences of not having a backup.
+  * [x] Choose one backup method and outline the setup steps.
+  * [x] Create a weekly backup schedule (day, time, what to back up).
+  * [x] Research an example from cloud computing where a missing backup strategy led to issues and write a short incident case.
+  * [x] Backup Assignment [assignments/week2/backup.md]
 
 
 * [x] Assignment W2.4: Local VM (Due Sep 10, 2026, 9am)
-  * [x] Windows: Install a terminal on Windows (Git Bash/WSL). [Which OS do you have?
-  * [x] Pick a hypervisor (VirtualBox, VMware, Hyper-V, Multipass). [Which?]
+  * [x] Windows: Install a terminal on Windows (Git Bash/WSL). [Used Git Bash on Windows]
+  * [x] Pick a hypervisor (VirtualBox, VMware, Hyper-V, Multipass). [Microsoft Hyper-V]
   * [x] Create and start a minimal VM (e.g., Ubuntu 22.04).
   * [x] Capture proof of login with a terminal screenshot (≤ 800×600 px) showing your prompt and a command.
-  * [x] Write/update the tutorial in `assignments/week1/local-vm.md` and save the screenshot as `assignments/week1/vm-login.png`. [LINK/s]
+  * [x] Write/update the tutorial in `assignments/week1/local-vm.md`
+        - (Local VM Tutorial) [assignments/week1/local-vm.md]
+  * [x] VM Login Screenshot. [assignments/week1/vm-login.png]
 
 
 * [x] Assignment W2.5: Project proposal (Due Sep 10, 2026, 9am)
-  * [x] Start working towards a project proposal and fill out administrative fields and text. [https://github.com/cloudmesh-ai-luc/AnieWall/blob/main/project.md]
+  * [x] Start working towards a project proposal and fill out administrative fields and text. [project.md]
 
 
 # Week 1
