@@ -62,7 +62,7 @@ Note:
   * [x] Choose one backup method and outline the setup steps.
   * [x] Create a weekly backup schedule (day, time, what to back up).
   * [x] Research an example from cloud computing where a missing backup strategy led to issues and write a short incident case.
-  * [x] Backup Assignment [assignments/week2/backup.md]
+  * [x] Backup Assignment [https://github.com/cloudmesh-ai-luc/AnieWall/blob/50a7978692ac9ef1374c88cd51ce5d513616db52/assignments/week2/backup.md]
 
 
 * [x] Assignment W2.4: Local VM (Due Sep 10, 2026, 9am)
@@ -71,18 +71,20 @@ Note:
   * [x] Create and start a minimal VM (e.g., Ubuntu 22.04).
   * [x] Capture proof of login with a terminal screenshot (≤ 800×600 px) showing your prompt and a command.
   * [x] Write/update the tutorial in `assignments/week1/local-vm.md`
-        - (Local VM Tutorial) [assignments/week1/local-vm.md]
-  * [x] VM Login Screenshot. [assignments/week1/vm-login.png]
+        - (Local VM Tutorial) [https://github.com/cloudmesh-ai-luc/AnieWall/blob/50a7978692ac9ef1374c88cd51ce5d513616db52/assignments/week1/local-vm.md]
+  * [x] VM Login Screenshot. [https://github.com/cloudmesh-ai-luc/AnieWall/blob/50a7978692ac9ef1374c88cd51ce5d513616db52/assignments/week1/vm-login.png]
 
 
 * [x] Assignment W2.5: Project proposal (Due Sep 10, 2026, 9am)
-  * [x] Start working towards a project proposal and fill out administrative fields and text. [project.md]
+  * [x] Start working towards a project proposal and fill out administrative fields and text. [https://github.com/cloudmesh-ai-luc/AnieWall/blob/50a7978692ac9ef1374c88cd51ce5d513616db52/project.md]
 
 
 # Week 1
 
-  * [x] Assignment W1.1: What hardware do you have? (Past Due) [LINK]
+  * [x] Assignment W1.1: What hardware do you have? (Past Due)
+    - Dell Latitude 7480 laptop with an Intel Core i5-7200U 2.50 GHz dual-core processor, 8 GB RAM
   * [x] Fill out the LUC Hardware Questionnaire.
+        - LUC Hardware Questionnaire: [https://docs.google.com/forms/d/e/1FAIpQLSdxxTnj8JFrrbREcM0wQ7B9nGmqpYfBPRddhKnGE7e7Dui_lA/viewform]
 
 
 * [x] Assignment W1.2: Lecture review (Past Due)
