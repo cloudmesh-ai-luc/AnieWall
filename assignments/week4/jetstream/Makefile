@@ -34,4 +34,5 @@ help:
 	@echo "  make stop                Stop the VM"
 	@echo "  make list                List Jetstream VMs"
 	@echo "  make delete              Delete the VM"
+	@echo "  make help                Show available commands"
 	@echo "  make create NAME=vm2     Create another VM"
