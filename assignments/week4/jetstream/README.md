@@ -8,8 +8,9 @@ The installed client was verified with:
 
 ```bash
 openstack --version
+```
 
-The existing jetstream configuration in ~/.config/openstack/clouds.yaml was used to authenticate to the cloud.
+The existing Jetstream configuration in `~/.config/openstack/clouds.yaml` was used to authenticate to the cloud.
 
 ## Jetstream Configuration
 
@@ -36,28 +37,30 @@ The following targets were implemented:
 
 ## Managing Multiple Virtual Machines
 
-The Makefile uses a configurable NAME variable.
+The Makefile uses a configurable `NAME` variable.
 
 The default VM is:
 
 ```makefile
 NAME ?= week4-js
+```
 
 A different VM can be managed by overriding the variable:
 
-```markdown
 ```bash
-- make create NAME=vm2
-- make stop NAME=vm2
-- make start NAME=vm2
-- make delete NAME=vm2
+make create NAME=vm2
+make stop NAME=vm2
+make start NAME=vm2
+make delete NAME=vm2
+```
 
-Two Jetstream instances, week4-js and vm2, were successfully created and managed using the same Makefile.
+Two Jetstream instances, `week4-js` and `vm2`, were successfully created and managed using the same Makefile.
 
 ## Directory Organization
 
 The Week 4 environments are separated into directories:
 
+```text
 assignments/
 └── week4/
     ├── local/
@@ -65,5 +68,6 @@ assignments/
     │   ├── Makefile
     │   └── README.md
     └── chameleon/
+```
 
 This structure separates local Multipass automation from Jetstream and Chameleon cloud automation.
