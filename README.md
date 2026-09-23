@@ -2,6 +2,69 @@ Git-ID -> AnieWall
 
 *  Accounts: [https://piazza.com/class/mt5rkdsycb31c3/post/12]
 
+## Week 4 Tasks (Due Sep 24, 2026, 9am)
+
+- [x] Assignment W4.1: VM on local machine via Makefile
+
+    - [x] Pick a local VM framework and ensure it is installed. Multipass 1.16.3 was used on Windows.
+    - [x] Write a Makefile with the necessary targets to manage a single VM.
+    - [x] Configure and demonstrate management of multiple machines using the configurable `NAME` variable.
+    - [x] Organize local and cloud Makefiles in separate directories.
+    - [x] [W4.1 Local VM Assignment](https://github.com/cloudmesh-ai-luc/AnieWall/tree/main/assignments/week4/local)
+
+- [x] Assignment W4.2: VM on Jetstream 2
+
+    - [x] Install the OpenStack command-line client using `pipx`.
+    - [x] Configure Jetstream access through `clouds.yaml`.
+    - [x] Write a Makefile with the necessary targets to manage a Jetstream VM.
+    - [x] Configure and demonstrate management of multiple Jetstream VMs using the same Makefile.
+    - [x] Check the work into the repository.
+    - [x] [W4.2 Jetstream Assignment](https://github.com/cloudmesh-ai-luc/AnieWall/tree/main/assignments/week4/jetstream)
+
+- [x] Assignment W4.3: VM on Chameleon Cloud
+
+    - [x] Use the OpenStack command-line client for Chameleon Cloud.
+    - [x] Install and verify `python-chi` in a Python virtual environment.
+    - [x] Configure Chameleon access through `clouds.yaml`.
+    - [x] Create a KVM@TACC flavor reservation for the required VM resources.
+    - [x] Write a Makefile with the necessary targets to manage a Chameleon VM.
+    - [x] Configure and demonstrate management of multiple Chameleon VMs using the same Makefile.
+    - [x] Check the work into the repository.
+    - [x] [W4.3 Chameleon Cloud Assignment](https://github.com/cloudmesh-ai-luc/AnieWall/tree/main/assignments/week4/chameleon)
+
+- [ ] Assignment W4.4: Review Python
+
+    - [x] Set up and use a Python virtual environment with `venv`.
+    - [x] Ensure the OpenStack command-line tool is installed using `pipx`.
+    - [x] Review the use of `pip install` and `pipx install`.
+    - [ ] Review import statements and create a program using `os.system("ls")`.
+    - [ ] Review how to create a `__main__` block.
+    - [ ] Review how to write a Python function.
+    - [ ] Review how to pass command-line arguments to a Python program using `click`.
+    - [ ] Review running shell commands from Python using `os.system()` and `subprocess.run()`.
+    - [ ] Complete the W4.4 Python review documentation.
+
+    Did the Python review take more than 3 hours?
+
+    - [ ] Yes
+    - [ ] No
+
+## Week 4 Self-Assessment
+
+Assignments W4.1 through W4.3 were completed and documented in separate directories for the local Multipass, Jetstream 2, and Chameleon Cloud environments.
+
+The local assignment demonstrated VM lifecycle automation with Multipass and a Makefile. The same Makefile was successfully used to manage more than one virtual machine by overriding the `NAME` variable.
+
+The Jetstream assignment extended the same Makefile-based approach to an OpenStack cloud environment. OpenStack authentication was configured through `clouds.yaml`, and multiple Jetstream virtual machines were successfully managed using one Makefile.
+
+The Chameleon assignment required additional configuration because KVM@TACC used a reservation-specific flavor. A lease was created for two `m1.small` instances, the generated reservation flavor was incorporated into the Makefile, and multiple Chameleon virtual machines were successfully created and managed. The `python-chi` package was also installed and verified in a Python virtual environment.
+
+The most significant challenges involved configuring the OpenStack environments correctly, combining the Jetstream and Chameleon entries in `clouds.yaml`, working with Chameleon application credentials, and understanding the KVM@TACC reservation workflow. These issues were resolved through command-line verification and incremental testing before VM creation.
+
+The Week 4 work strengthened understanding of Makefile automation, OpenStack CLI usage, cloud-specific VM configuration, virtual environments, and management of multiple virtual machines across local and cloud platforms.
+
+Assignment W4.4 remains in progress. The virtual-environment, `pip`, and `pipx` portions have already been exercised during W4.2 and W4.3, while the remaining Python review topics will be completed separately.
+
 ## Week 3
 
 * [x] Assignment W3.1: VM on Jetstream (Due Sep 17, 2026, 9am)
