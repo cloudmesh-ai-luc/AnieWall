@@ -23,7 +23,7 @@ The following Chameleon Cloud resources were used:
 - Network: `sharednet1`
 - SSH keypair: `swallace6`
 
-KVM@TACC required a flavor reservation before the virtual machines could be launched. A lease named `week4-chameleon-lease` was created for two `m1.small` instances.
+For this KVM@TACC deployment, a flavor reservation was required before the virtual machines could be launched. A lease named `week4-chameleon-lease` was created for two `m1.small` instances.
 
 The active lease generated the following reservation-specific flavor:
 
@@ -31,7 +31,7 @@ The active lease generated the following reservation-specific flavor:
 reservation:c61813c3-961a-4d83-a464-4835edb7d33a
 ```
 
-The reservation-specific flavor was used by the Makefile to create the virtual machines.
+The reservation-specific flavor is tied to the active Chameleon lease. For a future lease, the generated `reservation:<reservation-id>` value must be supplied to the Makefile by updating the default value or overriding the `FLAVOR` variable when running `make`.
 
 ## Makefile Targets
 
@@ -120,8 +120,8 @@ This structure separates local Multipass automation from Jetstream and Chameleon
 
 ## Summary
 
-The Chameleon Cloud environment was successfully configured using the OpenStack command-line client and `python-chi`.
+The Chameleon Cloud environment was successfully configured for command-line access using the OpenStack client. The `python-chi` package was also installed and verified in a Python virtual environment.
 
-A KVM@TACC reservation was created for two `m1.small` virtual machine instances. The reservation-specific flavor was incorporated into the Makefile, and the same Makefile was used to create and manage multiple virtual machines.
+A KVM@TACC reservation was created for two `m1.small` virtual machine instances. The generated reservation-specific flavor was incorporated into the Makefile, and the same Makefile was used to create and manage multiple virtual machines.
 
-The assignment demonstrates automated virtual machine lifecycle management using Make and OpenStack on Chameleon Cloud.
+The assignment demonstrates automated virtual machine lifecycle management using Make and the OpenStack command-line interface on Chameleon Cloud.
