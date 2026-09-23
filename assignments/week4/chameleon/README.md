@@ -13,8 +13,6 @@ The Chameleon environment was configured in:
 ```
 The configuration contains separate cloud entries for Jetstream and Chameleon. No credentials or application secrets are stored in the repository.
 
-No credentials or application secrets are stored in the repository.
-
 ## Chameleon Resources
 
 The following Chameleon Cloud resources were used:
