@@ -10,7 +10,7 @@ The installed client was verified with:
 openstack --version
 ```
 
-The existing Jetstream configuration in `~/.config/openstack/clouds.yaml` was used to authenticate to the cloud.
+The Jetstream cloud configuration in `~/.config/openstack/clouds.yaml` was used for OpenStack authentication. The configuration file remains local to the system and is not stored in the repository.
 
 ## Jetstream Configuration
 
@@ -58,16 +58,30 @@ Two Jetstream instances, `week4-js` and `vm2`, were successfully created and man
 
 ## Directory Organization
 
+## Directory Organization
+
 The Week 4 environments are separated into directories:
 
 ```text
 assignments/
 └── week4/
     ├── local/
+    │   ├── Makefile
+    │   └── README.md
     ├── jetstream/
     │   ├── Makefile
     │   └── README.md
     └── chameleon/
+        ├── Makefile
+        └── README.md
 ```
 
-This structure separates local Multipass automation from Jetstream and Chameleon cloud automation.
+This structure separates local Multipass automation from Jetstream and Chameleon Cloud automation.
+
+## Summary
+
+The Jetstream 2 environment was successfully configured for command-line management using the OpenStack client.
+
+A Makefile was used to automate virtual machine creation, startup, shutdown, listing, and deletion. The configurable `NAME` variable also allowed multiple Jetstream virtual machines to be managed using the same Makefile.
+
+The assignment demonstrates automated virtual machine lifecycle management using Make and the OpenStack command-line interface on Jetstream 2.
