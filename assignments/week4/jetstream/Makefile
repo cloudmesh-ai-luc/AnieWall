@@ -1,4 +1,4 @@
-CLOUD ?= openstack
+CLOUD ?= jetstream
 NAME ?= week4-js
 IMAGE ?= Featured-Minimal-Ubuntu24
 FLAVOR ?= m3.tiny

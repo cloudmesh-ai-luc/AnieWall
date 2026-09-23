@@ -16,7 +16,7 @@ The existing Jetstream configuration in `~/.config/openstack/clouds.yaml` was us
 
 The Makefile uses the following Jetstream resources:
 
-- Cloud: `openstack`
+- Cloud: `jetstream`
 - Image: `Featured-Minimal-Ubuntu24`
 - Flavor: `m3.tiny`
 - Network: `auto_allocated_network`
