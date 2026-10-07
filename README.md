@@ -2,6 +2,83 @@ Git-ID -> AnieWall
 
 *  Accounts: [https://piazza.com/class/mt5rkdsycb31c3/post/12]
 
+## Week 6 Tasks (Due Oct 8, 2026, 9am)
+
+- [x] Continue the libcloud/provider assignment using the current `cloudmesh-ai-vm` development branch.
+- [x] Communicate progress and findings through Piazza.
+- [x] Use GitHub issues, feature branches, regression tests, and pull requests.
+- [x] Stay synchronized with the current upstream `dev2` branch.
+- [x] Validate Jetstream as the first provider using real cloud resources.
+- [ ] Validate Chameleon Cloud as the second provider.
+- [ ] Develop or adapt a smoke test for a second provider.
+
+### Jetstream Provider Validation
+
+Jetstream testing was performed against the current `dev2` branch of `cloudmesh-ai/cloudmesh-ai-vm`.
+
+A defect was reproduced in `cmx vm list` when Libcloud failed and the OpenStack CLI fallback incorrectly returned no virtual machines even though a VM existed in the Jetstream project.
+
+- Issue #35: https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/35
+- Pull Request #36: https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/36
+
+A second defect was identified in Jetstream flavor discovery. `get_flavors()` returned an empty result when Libcloud raised an exception instead of using the OpenStack CLI fallback.
+
+- Issue #37: https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/37
+- Pull Request #38: https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/38
+
+The flavor fallback fix was validated with a regression unit test and against the real Jetstream provider. The provider successfully returned the available Jetstream flavors, including `m3.tiny`.
+
+### Standalone Jetstream Validation
+
+The `tests/standalone` examples from the shared repository were also used.
+
+The Jetstream cloud-services test successfully authenticated, retrieved the Keystone service catalog, and identified 17 registered services. The Heat orchestration service was registered but its endpoint was not responding.
+
+The standalone Libcloud VM test was then executed with the smallest available flavor, `m3.tiny`, using:
+
+- Image: `Featured-Minimal-Ubuntu24`
+- Flavor: `m3.tiny`
+- Network: `auto_allocated_network`
+- Security group: `default`
+- Keypair: `swallace1`
+
+The VM reached the `ACTIVE` state and a floating IP was successfully attached. The temporary VM and floating IP were deleted immediately after validation, and cleanup was confirmed.
+
+## Week 6 Self-Assessment
+
+The Week 6 work focused primarily on real Jetstream provider validation and fixing reproducible OpenStack provider defects.
+
+The work demonstrated the relationship between the `cmx` Click-based CLI, `clouds.yaml`, the OpenStack provider implementation, Libcloud, and the native OpenStack CLI. Two separate Jetstream defects were isolated and documented through GitHub issues and pull requests.
+
+Regression tests were added before modifying provider behavior, and the fixes were validated against the real Jetstream environment rather than relying only on mocked unit tests.
+
+The Jetstream standalone tests were also exercised. The service-catalog test completed successfully, and a temporary `m3.tiny` VM was created through the Libcloud standalone example, reached the `ACTIVE` state, received a floating IP, and was removed after testing.
+
+The second-provider requirement remains in progress. Chameleon Cloud will be evaluated next using the available standalone and smoke-test examples.
+
+## Week 5 Tasks (Due Oct 1, 2026, 9am)
+
+- [x] Fork and clone the shared `cloudmesh-ai-vm` repository.
+- [x] Create feature/testing branches rather than working directly on the shared branch.
+- [x] Evaluate the OpenStack/Jetstream provider implementation.
+- [x] Test provider information and VM-list behavior against a real Jetstream environment.
+- [x] Identify reproducible provider defects and document them through GitHub issues.
+- [x] Add regression tests before applying provider fixes.
+- [x] Submit small, separate pull requests for independent defects.
+- [ ] Complete a shell-based command verification script covering the remaining `cmx vm` commands.
+
+## Week 5 Self-Assessment
+
+The Week 5 work concentrated on understanding and testing the shared Cloudmesh VM framework rather than implementing a new provider from scratch.
+
+Testing demonstrated how the Click-based CLI selects the configured provider, how Jetstream authentication is obtained from `clouds.yaml`, and how the OpenStack provider uses Libcloud with native OpenStack CLI fallbacks.
+
+Initial testing exposed several environment and provider issues, including dependency and startup problems in earlier development revisions. After upstream updates were incorporated, the work was redirected toward the current `dev2` branch.
+
+Real Jetstream testing reproduced a VM-list fallback defect, which was documented as Issue #35 and addressed in Pull Request #36. The investigation showed that the OpenStack CLI returned an existing VM while the Cloudmesh fallback incorrectly discarded the result.
+
+The main remaining Week 5 item is broader command-validation coverage. Manual, unit, smoke, and standalone testing have been performed, but a dedicated shell verification script covering the remaining `cmx vm` command set is still to be completed.
+
 ## Week 4 Tasks (Due Sep 24, 2026, 9am)
 
 - [x] Assignment W4.1: VM on local machine via Makefile
