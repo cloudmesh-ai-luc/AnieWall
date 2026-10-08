@@ -87,6 +87,7 @@ The remote session confirmed execution inside the Chameleon VM:
 hostname: ssh-vm-demo-swallace-74c78a51
 user: cc
 kernel: 6.8.0-124-generic
+```
 
 After validation, the VM, floating IP, and Blazar lease were deleted. Final checks confirmed that no test VM, floating IP, or lease remained.
 
