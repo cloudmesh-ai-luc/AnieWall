@@ -2,6 +2,96 @@ Git-ID -> AnieWall
 
 *  Accounts: [https://piazza.com/class/mt5rkdsycb31c3/post/12]
 
+## Week 7 Tasks
+
+- [x] Continue testing and fixing the shared `cloudmesh-ai-vm` framework against the current upstream `dev2` branch.
+- [x] Keep changes isolated in feature branches and submit focused pull requests with validation evidence.
+- [x] Improve smoke-test reliability and provider-specific test isolation.
+- [x] Continue OpenStack/Jetstream testing and identify provider-level defects.
+- [x] Test the SSH/GitHub key-management commands on Windows.
+- [x] Add regression tests for newly reproduced key-management defects.
+- [x] Validate SSH passphrase detection using real local keys without exposing private-key material.
+- [ ] Continue provider testing requested in the shared `TODO.md`, including additional repeatable tests where coverage remains incomplete.
+- [ ] Review open pull requests after instructor/reviewer feedback and make only requested follow-up changes.
+
+### Week 7 Shared-Repository Contributions
+
+Week 7 work continued against the shared `cloudmesh-ai/cloudmesh-ai-vm` repository. The emphasis shifted from only exercising provider commands to improving the reliability of the test framework and correcting defects reproduced during real use.
+
+| PR | Status | Contribution |
+| --- | --- | --- |
+| [#55](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/55) | Merged | Added the missing `Optional` import that prevented smoke-test collection. |
+| [#56](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/56) | Merged | Isolated provider-specific lifecycle smoke tests so a target runs only the intended provider case. |
+| [#60](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/60) | Open | Restores the missing OpenStack floating-IP helper used by VM information workflows. |
+| [#65](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/65) | Open | Normalizes SSH-key fields returned by the GitHub API for `cmx vm key github list`. |
+| [#67](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/67) | Open | Fixes local SSH-key passphrase detection so protected keys are detected without interactive prompts. |
+
+Open pull requests are recorded as submitted work only and are not treated as integrated changes until they are merged upstream.
+
+### Smoke-Test Reliability
+
+The current `dev2` smoke-test path initially failed during collection because `tests/smoke/benchmark_helper.py` referenced `Optional[str]` without importing `Optional`.
+
+Pull Request #55 added the missing import so the smoke lifecycle tests could be collected successfully.
+
+Provider-specific Makefile targets were then reviewed. A target such as `make multipass` previously included the complete parametrized lifecycle test file, which allowed unrelated provider cases to be collected. Pull Request #56 changed each target so that it selects only the corresponding provider lifecycle case.
+
+Both Pull Requests #55 and #56 were merged into the shared repository.
+
+### OpenStack Floating-IP Defect
+
+Further Jetstream testing reproduced an error in VM information handling:
+
+`OpenstackManager object has no attribute '_get_floating_ip'`
+
+The surrounding implementation already expected an internal floating-IP helper, but the method was not defined correctly on the class.
+
+Pull Request #60 restores `_get_floating_ip()` and checks the OpenStack server address records for entries whose `OS-EXT-IPS:type` is `floating`.
+
+The change was validated through Python compilation, whitespace checking, and a focused mock test of fixed and floating address data. The pull request remains open for review.
+
+### GitHub SSH-Key Listing
+
+Testing of `cmx vm key github list` identified a mismatch between the fields returned by the GitHub API and the fields expected by the Cloudmesh display code.
+
+The GitHub API returns values including `title` and `key`, while the existing command expected normalized values including `name`, `type`, and `fingerprint`.
+
+Pull Request #65 normalizes the returned GitHub key data by:
+
+- mapping the GitHub `title` field to `name`;
+- extracting the SSH key type from the public-key value; and
+- calculating the SHA256 fingerprint from the public-key data.
+
+The command was then validated successfully against the configured GitHub account. The pull request remains open for review.
+
+### SSH Passphrase Detection
+
+Local key scanning exposed a separate key-management defect. Before the fix, `cmx vm key scan` caused interactive `Enter passphrase:` prompts on Windows. Two local Ed25519 private keys that were independently verified as password-protected were then incorrectly displayed as `Passphrase: No`.
+
+The original implementation used `ssh-keygen -y -f <key>` as the passphrase check. This subprocess could enter an interactive passphrase path, making it unsuitable for a noninteractive scan.
+
+Pull Request #67 replaces that check with Paramiko's private-key loader. Paramiko was selected because it can inspect private keys programmatically without spawning an interactive `ssh-keygen` process, provides a platform-independent check, and is already a project dependency.
+
+Three focused regression tests were added:
+
+1. an unprotected key returns `False`;
+2. a password-protected key returns `True`; and
+3. an unrelated parsing error is not falsely reported as passphrase protection.
+
+Validation produced:
+
+```text
+3 passed
+```
+The implementation also passed Python compilation and git diff --check.
+Real Windows validation was then repeated with `cmx vm key scan`. The scan completed without interactive passphrase prompts, and both protected local Ed25519 keys were correctly reported as:
+Passphrase: Yes
+No private key or passphrase was added to the repository.
+
+Week 7 Testing Status
+The shared repository's current TODO.md continues to request detailed, repeatable provider testing. Jetstream and Chameleon already received substantial real-cloud validation in the previous work, while several local and hyperscaler providers still have incomplete coverage in the shared project.
+The remaining Week 7 work will therefore concentrate on additional provider testing and reviewer feedback rather than expanding the scope of the current key-management pull requests.
+
 ## Week 6 Tasks (Due Oct 8, 2026, 9am)
 
 - [x] Continue the libcloud/provider assignment using the current `cloudmesh-ai-vm` development branch.
