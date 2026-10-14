@@ -92,6 +92,18 @@ Week 7 Testing Status
 The shared repository's current TODO.md continues to request detailed, repeatable provider testing. Jetstream and Chameleon already received substantial real-cloud validation in the previous work, while several local and hyperscaler providers still have incomplete coverage in the shared project.
 The remaining Week 7 work will therefore concentrate on additional provider testing and reviewer feedback rather than expanding the scope of the current key-management pull requests.
 
+### Use of ChatGPT as a Supporting Tool
+
+ChatGPT was used selectively during Week 7 as a supporting tool for debugging, reviewing possible implementation approaches, and improving technical documentation.
+
+One example occurred during the SSH passphrase-detection investigation. The existing `ssh-keygen` approach was producing interactive prompts and incorrect passphrase results on Windows. ChatGPT was used to help explore noninteractive alternatives and to reason through the behavior observed in the terminal. An initial `ssh-keygen` option that was considered did not work with the installed Windows OpenSSH version, producing a `Too many arguments` error. That result was verified directly in the local environment and the approach was discarded.
+
+Further investigation led to testing Paramiko's private-key loading functionality. Paramiko was already a dependency of the project and was tested directly against the local SSH keys before any code change was made. The final implementation was then validated with unit tests, Python compilation, `git diff --check`, and a real `cmx vm key scan` execution.
+
+ChatGPT was also used to assist with organizing regression-test ideas, reviewing pull-request wording, and summarizing completed work for the course README. Technical conclusions were based on locally reproduced behavior, repository code, test results, and command-line validation rather than accepting generated suggestions without verification.
+
+No private keys, passphrases, cloud credentials, or other secrets were shared with the tool.
+
 ## Week 6 Tasks (Due Oct 8, 2026, 9am)
 
 - [x] Continue the libcloud/provider assignment using the current `cloudmesh-ai-vm` development branch.
