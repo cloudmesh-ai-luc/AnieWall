@@ -1,323 +1,537 @@
-# Project Proposal - Cloud-Native Biometric Consent and Audit Platform
+# Cloud-Native Biometric Consent and Audit Platform
 
 **Student:** Stephanie Wallace  
 **Loyola Email:** swallace6@luc.edu  
 **GitHub ID:** AnieWall  
 **Course:** Cloud Computing, DevOps, and AI  
-**Instructor:** Gregor von Laszewski  
-**Date:** September 8, 2026  
-**Status:** Revised Initial Proposal
-
-## Project Description
-
-Biometric technologies such as facial-recognition systems can process sensitive personal information. Before biometric information is collected or used, an application may need to determine whether valid consent exists, what purpose the consent covers, whether the consent is still active, and whether it has been revoked.
-
-Previous academic work explored the design of biometric consent mechanisms, including consent capture, verification, revocation, and auditability.
-
-This Cloud Computing project investigates a different technical problem:
-
-**How can a biometric-consent mechanism be deployed, secured, monitored, and operated as a cloud service?**
-
-The proposed project will create a small cloud-hosted consent-verification service. A client application will send a request asking whether a simulated biometric operation is permitted. The service will check the applicable consent record and return an `allow` or `deny` result.
-
-Each verification or revocation event will also be recorded so that activity can later be audited.
-
-The prototype will use synthetic identifiers and simulated consent records. It will not collect or process real biometric information.
+**Instructor:** Professor Gregor von Laszewski  
+**Date:** October 15, 2026  
+**Status:** Project Architecture and Implementation Update
 
 ---
 
-## Problem and Motivation
+## Abstract
 
-Consent may be implemented directly inside an individual application. However, this can make it difficult to reuse the consent mechanism across multiple systems or to manage important cloud-computing concerns such as:
+The Cloud-Native Biometric Consent and Audit Platform is a multi-tier cloud system for managing consent associated with simulated biometric-data use. The system separates public consent interactions from protected administrative and audit functions, allowing a data subject to create, review, verify, and revoke consent while restricting management and audit operations to authorized users. A relying client can query the platform before a simulated biometric operation and receive a deterministic allow-or-deny decision based on the current consent record, approved purpose, and revocation state.
 
-- availability;
-- security;
-- monitoring;
-- persistent storage;
-- backup and recovery;
-- auditability;
-- service deployment; and
-- controlled access.
+The current architecture uses three cloud environments with distinct roles: Multipass for local development and repeatable testing, Jetstream 2 for the protected management and audit tier, and Azure as the public-cloud environment for the public-facing application tier. The design integrates the shared `cmx vm` framework as the common VM-management and provider-validation layer. Containerized services, Kubernetes deployment, automated testing, GitHub-based DevOps practices, and an AI-assisted consent-language normalization component extend the system beyond the earlier biometric-consent research into a cloud systems implementation.
 
-A separate cloud-hosted consent service could allow multiple applications to verify consent through a common interface.
-
-For example, before performing a simulated facial-verification operation, an application could ask:
-
-> Does this user currently have valid consent for this specific purpose?
-
-The cloud service would evaluate the stored consent information and return a decision.
+The prototype uses synthetic identifiers and simulated biometric events. No real biometric information is required for the class implementation.
 
 ---
 
-## Proposed Cloud Solution
+## 1. System Purpose
 
-The initial system will contain several basic components.
+Applications that rely on biometric information may need to determine whether valid consent exists before a biometric operation is performed. The decision depends on more than the existence of a consent record. The system must also determine whether the consent:
 
-### Client / Demo Application
+- belongs to the relevant data subject;
+- covers the requested purpose;
+- is currently active;
+- has been revoked; and
+- can be demonstrated later through an audit record.
 
-A simple client will submit requests to the consent service.
+The platform provides these capabilities as a reusable cloud service rather than embedding all consent logic inside one client application.
 
-The client may request permission for a simulated biometric operation such as:
+A relying application can therefore ask a focused question such as:
 
-- identity verification;
-- account authentication; or
-- another predefined purpose.
+> Does valid consent currently exist for this synthetic subject and this specific biometric purpose?
 
-### Consent Verification API
+The consent service evaluates the stored record and returns a deterministic decision. Each verification, denial, update, and revocation event is recorded for later audit.
 
-A REST API will receive requests from the client.
+---
 
-The API will:
+## 2. Relationship to the Earlier Biometric Project for a Previous Class
 
-1. identify the relevant consent record;
-2. determine whether the requested purpose is permitted;
-3. determine whether the consent is active or revoked;
-4. return an `allow` or `deny` response; and
-5. record the decision.
+The earlier biometric work focused primarily on the consent model itself, including consent capture, purpose limitation, verification, revocation, auditability, and the legal or regulatory principles that influence biometric-consent design.
 
-### Consent Data Store
+The Cloud Computing project however, addresses a different technical problem: how that consent model can be implemented and operated as a secure, multi-tier cloud service.
 
-The system will maintain synthetic consent information such as:
+The current work adds:
 
-- consent identifier;
-- synthetic user identifier;
-- permitted purpose;
-- consent status;
-- date granted; and
-- date revoked.
+- multi-cloud infrastructure;
+- public and protected service tiers;
+- VM lifecycle management through `cmx vm`;
+- containerized deployment;
+- Kubernetes-based public service hosting;
+- REST APIs;
+- persistent cloud data services;
+- role-based administrative separation;
+- automated and repeatable provider testing;
+- DevOps workflows using GitHub branches, pull requests, and tests;
+- cloud security boundaries;
+- AI-assisted consent-language normalization; and
+- client applications that consume the consent service.
 
-### Audit Log
+The project therefore uses the earlier consent research as domain background while concentrating on cloud architecture, deployment, security, automation, and system integration.
 
-The audit component will record important events such as:
+---
+
+## 3. User Groups and Trust Boundaries
+
+The architecture separates two primary user groups because they require different privileges and interfaces.
+
+### 3.1 Data Subject / Public User
+
+The public user can:
+
+- register using synthetic identity data;
+- review the purpose for which consent is requested;
+- grant or refuse consent;
+- check current consent status; and
+- revoke previously granted consent.
+
+The public interface does not expose administrative or audit-management capabilities.
+
+### 3.2 Administrator / Auditor
+
+Authorized administrative users can:
+
+- manage predefined consent purposes and policy metadata;
+- review consent state;
+- inspect revocation events;
+- review audit records;
+- investigate failed or denied verification requests; and
+- manage operational settings required by the protected service tier.
+
+Administrative functions are isolated from the public interface and require stronger authentication and authorization controls.
+
+---
+
+## 4. Functional Workflow
+
+The core consent lifecycle is:
+
+```text
+Registration
+    |
+    v
+Consent Creation
+    |
+    v
+Purpose-Bound Consent Record
+    |
+    v
+Consent Verification Request
+    |
+    +---- valid and active ----> ALLOW
+    |
+    +---- absent / revoked /
+          wrong purpose -------> DENY
+    |
+    v
+Audit Event
+
+Consent may later be revoked, after which subsequent verification requests must return DENY.
+```
+
+A separate relying client application demonstrates how another system consumes the consent-verification API before performing a simulated biometric operation.
+
+---
+
+## 5. Multi-Cloud Architecture
+
+The current design assigns a distinct role to each of the three required cloud environments.
+
+| Environment | Category | Primary Role | Current State |
+| --- | --- | --- | --- |
+| **Multipass** | Local | Development, container testing, smoke testing, client/demo execution | Validated through existing CLI and lifecycle smoke tests |
+| **Jetstream 2** | OpenStack | Protected consent-management, audit, and backend service tier | Real-cloud VM workflows previously validated |
+| **Azure** | Public cloud | Public-facing application tier and Kubernetes-hosted consent interface | Selected public-cloud target; live `cmx vm` validation remains to be completed |
+
+### 5.1 Logical Architecture
+
+```mermaid
+flowchart TB
+    U[Data Subject / Public User]
+    C[Relying Client / Demo Application]
+    A[Authorized Administrator / Auditor]
+
+    subgraph AZ["Azure - Public Cloud Tier"]
+        UI[Public Consent Web Interface]
+        API[Public Consent API]
+        AI[AI Consent-Language Normalization]
+    end
+
+    subgraph JS["Jetstream 2 - Protected Management Tier"]
+        MS[Consent Management Service]
+        PE[Deterministic Policy / Verification Engine]
+        ADM[Administrator / Auditor Interface]
+        DB[(PostgreSQL Consent Store)]
+        LOG[(Protected Audit Store)]
+    end
+
+    subgraph MP["Multipass - Local Development Tier"]
+        DEV[Local Development]
+        TEST[Container and Smoke Testing]
+        DEMO[Client / Demo Testing]
+    end
+
+    CMX[cmx vm Provider and VM Management Layer]
+
+    U --> UI
+    C --> API
+    UI --> API
+    API --> AI
+    API --> MS
+    MS --> PE
+    PE --> DB
+    PE --> LOG
+    A --> ADM
+    ADM --> MS
+    MS --> LOG
+
+    CMX -. manages and validates compute environments .-> MP
+    CMX -. manages and validates compute environments .-> JS
+    CMX -. public-cloud provider integration .-> AZ
+
+    DEV --> TEST
+    TEST --> DEMO
+```
+
+The public and protected tiers form a security boundary. Public requests enter through the Azure-hosted service layer. Consent-management, administrative, persistent-data, and audit operations remain in the protected backend tier.
+
+---
+
+## 6. `cmx vm` Integration
+
+The shared `cloudmesh-ai-vm` framework provides the infrastructure-management layer used to work with the selected environments.
+
+The project uses `cmx vm` for activities such as:
+
+- selecting a provider;
+- inspecting provider information;
+- listing available VM resources;
+- starting and stopping test virtual machines;
+- validating provider lifecycle behavior;
+- checking images and flavors;
+- testing key-management operations;
+- verifying resource cleanup; and
+- recording repeatable smoke-test evidence.
+
+The project services run on top of these compute environments. `cmx vm` is therefore not the consent application itself; it is the common infrastructure-control and validation layer supporting the multi-cloud deployment.
+
+### 6.1 Current `cmx vm` Validation
+
+Multipass has been validated on Windows using the existing CLI and unified lifecycle smoke tests. The lifecycle test covered VM creation, running-state detection, connectivity, temporary SSH-key upload and deletion, shelve and unshelve behavior, VM information, stop, deletion, and cleanup.
+
+Jetstream has also been exercised using real OpenStack resources during the shared-provider work.
+
+Azure remains the outstanding public-cloud provider that must be configured and validated against the current `dev2` implementation.
+
+---
+
+## 7. Application Components
+
+### 7.1 Public Consent Interface
+
+The public-facing service provides registration and consent-management operations for data subjects. It exposes only the functionality required for public interaction.
+
+### 7.2 Consent Verification API
+
+The verification API accepts a synthetic subject identifier, requested purpose, and client context. It returns a structured decision such as:
+
+```json
+{
+  "decision": "allow",
+  "purpose": "account-authentication",
+  "consent_status": "active"
+}
+```
+
+The final allow-or-deny result is deterministic and is based on structured consent state rather than a free-form AI response.
+
+### 7.3 Consent Management Service
+
+The protected management service maintains consent lifecycle operations, including creation, status changes, revocation, and policy metadata.
+
+### 7.4 Administrator / Auditor Interface
+
+This interface is available only to authorized users and supports operational review, audit inspection, and controlled administrative functions.
+
+### 7.5 Client / Demo Application
+
+A separate client demonstrates how another application depends on the consent platform.
+
+Before a simulated biometric action, the client sends a verification request. The client continues only when the service returns an active consent decision for the required purpose.
+
+This design demonstrates that the consent platform is a reusable service rather than a single standalone website.
+
+---
+
+## 8. Data Architecture
+
+PostgreSQL is the primary structured-data store for the cloud implementation.
+
+The database can contain:
+
+- synthetic subject identifiers;
+- consent identifiers;
+- allowed purposes;
+- consent state;
+- timestamps;
+- revocation metadata;
+- client identifiers;
+- policy references; and
+- audit-event references.
+
+Real facial images are not required for the class prototype.
+
+If a simulated biometric reference is needed for integration testing, it is separated from the consent record and linked through a synthetic or pseudonymous identifier. The consent database is not treated as a general repository for biometric images.
+
+---
+
+## 9. AI Integration
+
+AI is used as an assistive interpretation layer rather than as the final authorization mechanism.
+
+A user may provide human-readable consent language such as:
+
+```text
+Facial verification may be used for account login,
+but not for advertising.
+```
+
+The AI component converts or suggests structured attributes such as:
+
+```text
+authentication: allowed
+advertising: denied
+```
+
+The structured result is validated before storage. The final verification decision remains rule-based and depends on approved purpose, current consent state, and revocation status.
+
+This separation prevents an LLM from independently authorizing biometric-data use.
+
+Potential AI functions include:
+
+- consent-language normalization;
+- extraction of purpose restrictions;
+- detection of ambiguous consent text;
+- comparison between requested purpose and recorded consent scope; and
+- generation of human-readable explanations for administrative review.
+
+---
+
+## 10. DevOps Architecture
+
+The implementation follows the GitHub-based DevOps workflow used throughout the course.
+
+### 10.1 Version Control and Collaboration
+
+Development uses:
+
+- Git branches for isolated work;
+- small focused commits;
+- pull requests;
+- regression tests;
+- review before integration; and
+- documented validation evidence.
+
+Work on the shared `cloudmesh-ai-vm` repository has already exercised this workflow through multiple pull requests and provider tests.
+
+### 10.2 Containerization
+
+Application services are organized for Docker-based execution. Docker and Docker Compose support local integration testing, while the public cloud tier is designed for Kubernetes deployment.
+
+Containerization keeps the application environment portable across local and cloud infrastructure.
+
+### 10.3 Automated Testing
+
+Testing includes:
+
+- unit tests for consent rules;
+- API tests;
+- provider smoke tests;
+- lifecycle tests;
+- negative authorization tests;
+- revocation tests;
+- resource-cleanup verification; and
+- credential-leakage checks.
+
+### 10.4 CI/CD Direction
+
+GitHub Actions will be used for automated test execution and container validation as implementation progresses. Cloud deployment remains separated from source-control credentials through environment-specific secret management.
+
+---
+
+## 11. Security and Privacy Architecture
+
+Security is a primary system requirement because consent records relate to sensitive biometric-data use.
+
+### 11.1 Identity and Access Management
+
+The system separates public users from administrative users and applies role-based access controls.
+
+Administrative and audit functions require explicit authorization and are not exposed through the same public interface used for consent creation or verification.
+
+### 11.2 Least Privilege
+
+Each service receives only the permissions required for its function. Public services do not receive direct administrative privileges over protected data services.
+
+### 11.3 Encryption
+
+The architecture requires:
+
+- TLS for service-to-service and client-to-service traffic;
+- encryption at rest for persistent consent and audit data; and
+- secure handling of encryption keys and application secrets.
+
+### 11.4 Secrets Management
+
+Passwords, API tokens, cloud credentials, private SSH keys, and other secrets must not be committed to GitHub.
+
+Environment-specific secrets are injected at runtime through protected configuration or cloud secret-management mechanisms.
+
+### 11.5 Audit Logging
+
+Important events are recorded, including:
 
 - consent creation;
 - consent verification;
-- successful authorization;
-- denied requests; and
-- consent revocation.
+- allow and deny decisions;
+- consent updates;
+- revocation;
+- administrative access; and
+- policy changes.
 
-### Cloud Environment
+Audit records are separated from ordinary application logs so that security-relevant events can be reviewed independently.
 
-The first version of the service is expected to run on an Ubuntu virtual machine in **Chameleon Cloud**.
+### 11.6 Data Minimization and Purpose Limitation
 
----
+Only information necessary for the demonstration is stored. Consent is explicitly associated with a defined purpose, and a request for a different purpose must not inherit authorization automatically.
 
-## Initial Architecture
+### 11.7 Threat Considerations
 
-```text
-                 +------------------------+
-                 |   Client / Demo App    |
-                 +-----------+------------+
-                             |
-                             | HTTPS / REST
-                             |
-                             v
-                 +------------------------+
-                 | Consent Verification   |
-                 |      REST API          |
-                 |       FastAPI          |
-                 +-----------+------------+
-                             |
-                    +--------+--------+
-                    |                 |
-                    v                 v
-          +------------------+   +------------------+
-          | Consent Data     |   | Audit Log        |
-          | Store            |   |                  |
-          +------------------+   +------------------+
+The design considers threats including:
 
-                    Application hosted on
-
-                 +------------------------+
-                 | Chameleon Cloud VM     |
-                 | Ubuntu Linux           |
-                 +------------------------+
-
-                             ^
-                             |
-                     GitHub / DevOps
-```
-
-This architecture is preliminary and may change as the project develops and additional cloud-computing topics are introduced in the course.
+- unauthorized administrative access;
+- credential leakage;
+- privilege escalation;
+- unauthorized consent modification;
+- replay or misuse of stale consent;
+- processing after revocation;
+- cross-cloud communication exposure;
+- log tampering; and
+- unintended storage of sensitive biometric information.
 
 ---
 
-## Initial Technology Ideas
+## 12. Cloud Computing, DevOps, and AI
 
-The exact technologies have not yet been finalized.
+The project addresses the three course areas directly.
 
-| Component | Initial Idea |
+| Course Area | Project Implementation |
 | --- | --- |
-| Cloud platform | Chameleon Cloud |
-| Operating system | Ubuntu Linux |
-| Application language | Python |
-| REST API | FastAPI |
-| Initial database | SQLite |
-| Later database option | PostgreSQL |
-| Version control | GitHub |
-| API testing | curl / Postman |
-| Monitoring | Application and Linux logs |
-| Containerization | Docker, if appropriate later |
-| CI/CD | GitHub Actions, if appropriate later |
-
-The project will begin with the smallest functional implementation and become more advanced as relevant topics are covered in class.
+| **Cloud Computing** | Multi-cloud deployment across Multipass, Jetstream 2, and Azure; VM lifecycle management; public/protected service separation; persistent cloud storage; Kubernetes-hosted public tier |
+| **DevOps** | GitHub workflow, pull requests, Docker, repeatable tests, provider smoke tests, CI/CD, documentation, resource cleanup, and `cmx vm` integration |
+| **AI** | Consent-language normalization, purpose extraction, ambiguity detection, and assistive explanation while deterministic rules retain final authorization control |
 
 ---
 
-## Privacy and Security Considerations
+## 13. Current Implementation and Validation Status
 
-Privacy is an important part of this project because the system represents consent associated with biometric-data use.
+### Completed or Demonstrated
 
-The prototype will therefore consider principles such as:
+- Project scope has been separated from the earlier biometric research.
+- Public-user and administrator/auditor roles have been defined.
+- Consent creation, verification, revocation, and audit requirements have been identified.
+- Multipass has been validated with repeatable CLI and lifecycle smoke tests.
+- Jetstream VM workflows have been exercised with real cloud resources.
+- Shared `cmx vm` defects have been reproduced, tested, and submitted through focused pull requests.
+- SSH key-management behavior has been tested on Windows.
+- Security requirements and trust boundaries have been incorporated into the architecture.
 
-- **data minimization** - store only the information necessary for the demonstration;
-- **purpose limitation** - associate consent with a specific approved use;
-- **least-privilege access** - restrict access to consent information;
-- **encryption in transit** - protect API communication where practical;
-- **audit logging** - maintain records of important actions and decisions;
-- **secrets management** - avoid placing passwords, tokens, or private keys in GitHub;
-- **backup and recovery** - determine how persistent consent records could be restored; and
-- **revocation** - ensure that revoked consent no longer authorizes subsequent requests.
+### In Progress
 
-The prototype will use synthetic information rather than real biometric data.
-
----
-
-## Relationship to My Previous Biometric Project
-
-This project is related to my previous research topic but has a different technical objective.
-
-My earlier biometric project concentrated primarily on questions such as:
-
-- how biometric consent should be represented;
-- how consent should be captured;
-- how consent can be verified;
-- how consent can be revoked;
-- how activity can be audited; and
-- how legal and regulatory requirements influence consent design.
-
-The Cloud Computing project will instead concentrate on how such a mechanism can be implemented and operated as a cloud service.
-
-The new technical focus includes:
-
-- cloud virtual machines;
-- Linux deployment;
-- REST APIs;
-- persistent storage;
-- networking;
-- service availability;
-- security configuration;
-- monitoring;
-- backup and recovery; and
-- DevOps practices.
-
-Therefore, the intention is not to reproduce the previous project, but to use its problem domain as the basis for a new cloud-systems implementation.
+- Azure account/provider configuration and live `cmx vm` validation.
+- Public Kubernetes deployment on Azure.
+- Protected Jetstream management-tier deployment.
+- PostgreSQL schema implementation.
+- Public consent API implementation.
+- Administrator/auditor interface.
+- Docker packaging of project services.
+- AI-assisted consent-language normalization.
+- Cross-cloud secure communication.
+- Automated project CI/CD workflow.
 
 ---
 
-## Possible AI Extension
+## 14. Issues and Open Questions
 
-A later phase of the project may explore an AI component.
+The following items require further implementation or validation:
 
-For example, an LLM could potentially assist with converting human-readable consent language into structured consent attributes.
-
-Example:
-
-```text
-Human-readable consent:
-
-"I agree to facial verification for account login,
-but I do not agree to its use for advertising."
-```
-
-The AI component could assist in identifying structured information such as:
-
-```text
-Purpose: authentication
-Authentication allowed: yes
-Advertising allowed: no
-```
-
-The final `allow` or `deny` decision would remain rule-based rather than being determined directly by the LLM.
-
-This AI component is currently an optional extension and is not required for the first prototype.
+- Azure must be configured and tested as the required public-cloud provider.
+- The Azure Kubernetes deployment must be implemented within available course resource and cost limits.
+- The protected Jetstream management tier requires a finalized network-access design.
+- Secure communication between the public Azure tier and protected Jetstream tier must be established.
+- The PostgreSQL deployment location and backup strategy must be finalized.
+- Audit-log tamper resistance requires a concrete implementation.
+- Administrative authentication and role mapping require final configuration.
+- The AI normalization component requires an evaluation method for incorrect or ambiguous extraction.
+- Synthetic data must remain clearly separated from any real biometric information.
+- Final Docker/Docker Compose and Kubernetes deployment workflows require end-to-end validation.
 
 ---
 
-## Initial Goals
+## 15. Evaluation Criteria
 
-At this stage, I expect the project to demonstrate that:
+The implementation will be evaluated through observable system behavior.
 
-1. a consent record can be created using synthetic data;
-2. a client can request consent verification;
-3. the service can return an `allow` or `deny` result;
-4. consent can be revoked;
-5. a request after revocation can be denied;
-6. important events can be recorded in an audit log; and
-7. the service can run in a cloud-hosted Ubuntu environment.
-
-These goals may be refined as the project develops.
-
----
-
-## Scope
-
-### Initially In Scope
-
-- Cloud deployment
-- Consent verification
-- Synthetic consent records
-- REST API
-- Consent revocation
-- Audit logging
-- Basic persistence
-- Security configuration
-- Monitoring
-- Backup and recovery
-- Documentation
-
-### Currently Out of Scope
-
-- Collection of real biometric data
-- Training facial-recognition models
-- Real-world biometric identification
-- Production use
-- Enterprise-scale deployment
-- Full compliance certification
-- Repeating the complete legal analysis from my previous project
+| Capability | Success Condition |
+| --- | --- |
+| Consent creation | A synthetic consent record is stored with a defined purpose and active state |
+| Verification | A valid, active, purpose-matching consent returns `allow` |
+| Purpose limitation | A request for an unapproved purpose returns `deny` |
+| Revocation | A revoked consent returns `deny` on subsequent verification |
+| Auditability | Consent lifecycle and verification events appear in the protected audit record |
+| Role separation | Public users cannot access administrator/auditor operations |
+| Multi-cloud operation | Required project components can be demonstrated across the selected local, OpenStack, and public-cloud environments |
+| `cmx vm` integration | Provider and VM-management workflows are demonstrated for the selected cloud environments |
+| Containerization | Application services execute through Docker-based deployment |
+| AI integration | Human-readable consent text can be converted into structured attributes for validation without allowing the LLM to make the final authorization decision |
+| Security hygiene | No cloud credentials, private keys, passwords, or tokens are stored in the public repository |
 
 ---
 
-## Next Steps
+## 16. Project Deliverables
 
-The next stages of the project will include:
+The project deliverables include:
 
-1. reviewing the proposed architecture with the instructor;
-2. refining the project scope;
-3. determining the initial Chameleon Cloud configuration;
-4. designing the basic consent data model;
-5. defining the first REST API operations;
-6. deploying a minimal application to an Ubuntu cloud VM;
-7. refining security and privacy requirements; and
-8. determining which DevOps and AI components are appropriate as the course progresses.
+- `project.md` with architecture, implementation status, issues, and evaluation criteria;
+- architecture diagram;
+- source code for consent services and client/demo application;
+- Docker configuration;
+- Kubernetes deployment configuration for the public-cloud tier;
+- PostgreSQL schema;
+- automated tests;
+- `README.md` with setup and execution instructions;
+- `TUTORIAL.md` with an end-to-end user walkthrough;
+- security and privacy documentation;
+- cloud/provider validation evidence; and
+- final technical summary and presentation.
 
 ---
 
-## Relevant Course Resources
+## 17. Relevant Course Resources
+
+- Project Ideas and Requirements:  
+  https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/lecture/assignments/ideas/
+
+- Technical Report Writing:  
+  https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/section/writing/report/
 
 - Cloud Computing Introduction:  
   https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/lecture/cloud/introduction/
 
-- Virtualization Lecture:  
+- Virtualization:  
   https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/lecture/cloud/virtualization/
-
-- Privacy Lecture:  
-  https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/section/cloud/privacy/
 
 ---
 
-## Current Status
+## 18. Current Project Status
 
-This is an initial project proposal.
+The project has moved beyond the initial proposal stage into architecture refinement and implementation planning tied to tested cloud infrastructure.
 
-The architecture, technology choices, AI component, deployment strategy, and evaluation criteria are expected to evolve during the semester based on course material, implementation experience, and instructor feedback.
+The current design separates public consent access from protected administrative and audit functions, assigns clear roles to Multipass, Jetstream 2, and Azure, and integrates `cmx vm` as the common infrastructure-management layer.
+
+The immediate technical priorities are Azure provider validation, public-cloud Kubernetes deployment, protected Jetstream service deployment, containerized service implementation, PostgreSQL integration, and completion of the end-to-end consent verification and revocation flow.
