@@ -11,8 +11,8 @@ Git-ID -> AnieWall
 - [x] Test the SSH/GitHub key-management commands on Windows.
 - [x] Add regression tests for newly reproduced key-management defects.
 - [x] Validate SSH passphrase detection using real local keys without exposing private-key material.
-- [ ] Continue provider testing requested in the shared `TODO.md`, including additional repeatable tests where coverage remains incomplete.
-- [ ] Review open pull requests after instructor/reviewer feedback and make only requested follow-up changes.
+- [x] Complete additional repeatable provider testing for Multipass using the existing CLI and unified lifecycle smoke tests.
+- [ ] Review open pull requests after Professor Gregor's feedback and make only requested follow-up changes.
 
 ### Week 7 Shared-Repository Contributions
 
@@ -25,6 +25,7 @@ Week 7 work continued against the shared `cloudmesh-ai/cloudmesh-ai-vm` reposito
 | [#60](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/60) | Open | Restores the missing OpenStack floating-IP helper used by VM information workflows. |
 | [#65](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/65) | Open | Normalizes SSH-key fields returned by the GitHub API for `cmx vm key github list`. |
 | [#67](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/67) | Open | Fixes local SSH-key passphrase detection so protected keys are detected without interactive prompts. |
+| [#70](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/70) | Open | Adds Windows Multipass CLI and unified lifecycle benchmark results generated from repeatable smoke tests. |
 
 Open pull requests are recorded as submitted work only and are not treated as integrated changes until they are merged upstream.
 
@@ -89,9 +90,91 @@ Real Windows validation was then repeated with `cmx vm key scan`. The scan compl
 
 No private key or passphrase was added to the repository.
 
+### Multipass Provider Validation
+
+Multipass was selected for additional Week 7 provider validation because the shared `TODO.md` identified it as only partially tested.
+
+Testing was performed on Windows using Multipass 1.16.3+win against the current `dev2` branch.
+
+Before testing, the local `cmx` installation was refreshed from the current editable repository because the previously installed executable referenced an outdated command entry point. After reinstalling the current package with:
+
+`python -m pip install -e . --no-deps --force-reinstall`
+
+both `cmx --help` and `cmx vm provider list` executed successfully.
+
+The Multipass provider was then selected with:
+
+`cmx vm provider set multipass`
+
+and confirmed with:
+
+`cmx vm provider get`
+
+Two existing repeatable smoke tests were executed.
+
+#### Multipass CLI Smoke Test
+
+Executed:
+
+`python -m pytest -s tests\smoke\test-multipass-cli.py`
+
+Result:
+
+`1 passed, 1 warning in 103.95s`
+
+The test successfully validated:
+
+- provider listing and selection;
+- VM creation;
+- VM listing;
+- VM stop;
+- VM deletion;
+- image discovery; and
+- flavor discovery.
+
+#### Unified Multipass Lifecycle Test
+
+Executed:
+
+`python -m pytest -s -vv "tests\smoke\test_lifecycle_unified.py::test_provider_lifecycle[multipass]"`
+
+Result:
+
+`1 passed, 1 warning in 157.43s`
+
+The lifecycle test additionally validated:
+
+- provider requirements;
+- image and flavor discovery;
+- VM creation and running-state detection;
+- VM connectivity;
+- temporary SSH key upload and verification;
+- SSH key deletion and verification;
+- shelve and unshelve behavior;
+- VM information and listing; and
+- VM stop and deletion.
+
+Both tests generated benchmark result files under `results/smoke`.
+
+After testing, `multipass list` was used to confirm that the temporary smoke-test virtual machines had been removed and that no test resources remained.
+
+The benchmark files were checked for passwords, secrets, tokens, private keys, credentials, and API keys before being committed.
+
+The results were submitted separately in:
+
+- Pull Request #70: https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/70
+
+No implementation code was changed in PR #70. The pull request contains only the generated validation and benchmark evidence.
+
 ### Week 7 Testing Status
-The shared repository's current TODO.md continues to request detailed, repeatable provider testing. Jetstream and Chameleon already received substantial real-cloud validation in the previous work, while several local and hyperscaler providers still have incomplete coverage in the shared project.
-The remaining Week 7 work will therefore concentrate on additional provider testing and reviewer feedback rather than expanding the scope of the current key-management pull requests.
+
+The shared repository's `TODO.md` requests detailed, repeatable provider testing. Jetstream and Chameleon received substantial real-cloud validation during the earlier provider work, and Week 7 added repeatable Windows Multipass testing using both the existing CLI smoke test and the unified provider lifecycle test.
+
+Multipass therefore now has additional validation evidence covering VM lifecycle operations, connectivity, SSH key management, shelve and unshelve behavior, image and flavor discovery, and cleanup.
+
+Other providers in the shared repository still have incomplete coverage, but the additional Week 7 provider-testing contribution for Multipass has been completed and submitted in Pull Request #70.
+
+The remaining Week 7 activity is primarily to monitor the open pull requests and respond to Professor Gregor's feedback where necessary.
 
 ### Use of ChatGPT as a Supporting Tool
 
