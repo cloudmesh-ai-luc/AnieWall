@@ -85,10 +85,11 @@ Validation produced:
 ```
 The implementation also passed Python compilation and git diff --check.
 Real Windows validation was then repeated with `cmx vm key scan`. The scan completed without interactive passphrase prompts, and both protected local Ed25519 keys were correctly reported as:
-Passphrase: Yes
+`Passphrase: Yes`
+
 No private key or passphrase was added to the repository.
 
-Week 7 Testing Status
+### Week 7 Testing Status
 The shared repository's current TODO.md continues to request detailed, repeatable provider testing. Jetstream and Chameleon already received substantial real-cloud validation in the previous work, while several local and hyperscaler providers still have incomplete coverage in the shared project.
 The remaining Week 7 work will therefore concentrate on additional provider testing and reviewer feedback rather than expanding the scope of the current key-management pull requests.
 
