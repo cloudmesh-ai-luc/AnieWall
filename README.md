@@ -181,7 +181,8 @@ The current package was reinstalled with:
 After the refresh, both `cmx --help` and provider commands executed successfully.
 
 The Multipass provider was selected and validated through two repeatable smoke-test paths.
-Multipass CLI Smoke Test
+
+### Multipass CLI Smoke Test
 Executed:
 
 `python -m pytest -s tests\smoke\test-multipass-cli.py`
@@ -198,7 +199,8 @@ The test validated:
 - VM deletion;
 - image discovery; and
 - flavor discovery.
-Unified Multipass Lifecycle Test
+  
+### Unified Multipass Lifecycle Test
 Executed:
 
 `python -m pytest -s -vv "tests\smoke\test_lifecycle_unified.py::test_provider_lifecycle[multipass]"`
@@ -245,7 +247,7 @@ in the results repository:
 Before submission, the files were rechecked for sensitive values and whitespace problems.
 
 The corrected results submission was:
-- cloudmesh-ai-vm-results PR #1
+- [cloudmesh-ai-vm-results PR #1](https://github.com/cloudmesh-ai/cloudmesh-ai-vm-results/pull/1)
 Professor Gregor approved and merged the corrected results pull request on October 21, 2026.
 
 ### Week 7 Testing Status
@@ -267,10 +269,11 @@ Completed work includes:
 The major remaining Week 7 provider requirement is the selected public-cloud environment.
 
 The current three-cloud selection is:
-Environment	Category	Current Status
-Multipass	Local	Repeatable CLI and lifecycle validation completed
-Jetstream 2	OpenStack	Real-cloud VM and provider workflows previously validated
-Azure	Public Cloud	Selected; live cmx provider validation remains outstanding
+| Environment | Category | Current Status |
+| --- | --- | --- |
+| Multipass | Local | Repeatable CLI and lifecycle validation completed |
+| Jetstream 2 | OpenStack | Real-cloud VM and provider workflows previously validated |
+| Azure | Public Cloud | Selected; live `cmx` provider validation remains outstanding |
 
 Azure is therefore the next provider-validation priority.
 
@@ -293,7 +296,7 @@ The work therefore demonstrates not only code contribution but also the full rep
 
 ChatGPT was used selectively during Week 7 as a supporting tool for debugging, reviewing implementation alternatives, organizing regression-test ideas, interpreting command output, and improving technical documentation.
 
-One example occurred during the SSH passphrase-detection investigation. The existing ssh-keygen approach produced interactive prompts and incorrect passphrase results on Windows.
+One example occurred during the SSH passphrase-detection investigation. The existing `ssh-keygen` approach produced interactive prompts and incorrect passphrase results on Windows.
 
 ChatGPT was used to explore possible noninteractive approaches and reason through the observed terminal behavior. An initial ssh-keygen option was tested against the installed Windows OpenSSH version but produced a Too many arguments error. The approach was therefore discarded based on direct local verification.
 
@@ -302,7 +305,7 @@ Further investigation led to testing Paramiko's private-key-loading functionalit
 The final change was independently validated through:
 - unit testing;
 - Python compilation;
-- git diff --check;
+- `git diff --check`;
 - real Windows cmx key scan execution; and
 - subsequent validation against official upstream dev2 after Professor Gregor merged PR #67.
 ChatGPT was also used to assist with pull-request wording, review-response preparation, repository-structure checks, and README organization.
