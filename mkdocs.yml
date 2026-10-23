@@ -1,0 +1,5 @@
+site_name: AnieWall Documentation
+theme: readthedocs
+
+nav:
+  - Home: index.md
