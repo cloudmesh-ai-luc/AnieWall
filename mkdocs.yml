@@ -14,6 +14,19 @@ theme:
     - navigation.top
     - search.suggest
     - search.highlight
+  # This enables the full-width layout used in cloudmesh-ai-vm
+  content:
+    # This is the correct way in recent Material versions to allow wider content
+    # though the 'material' theme often defaults to a fixed width.
+    # We will add a custom CSS to ensure it matches.
+    # Wait, the most common way to get that 'wide' look is actually just the 
+    # default behavior or specific CSS. Let's use a custom CSS file.
+    # But let's try this first:
+    # Note: 'content' isn't a valid theme option for width. 
+    # We need 'extra_css'.
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md
