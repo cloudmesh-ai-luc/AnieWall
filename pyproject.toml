@@ -1,21 +1,23 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "AnieWall"
+name = "cloud-native-biometric-consent-audit"
 version = "0.1.0"
-description = "AnieWall project documentation and assignments"
+description = "Cloud-native biometric consent and audit platform for the Cloud Computing, DevOps, and AI course project"
 readme = "README.md"
-requires-python = ">=3.8"
-dependencies = [
-    "mkdocs",
-    "mkdocs-material",
-]
+requires-python = ">=3.10"
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
+    "pytest>=8",
     "black",
     "flake8",
+]
+
+docs = [
+    "mkdocs",
+    "mkdocs-material",
 ]
