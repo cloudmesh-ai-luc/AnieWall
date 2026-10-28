@@ -140,6 +140,8 @@ The current design assigns a distinct role to each of the three required cloud e
 
 ### 5.1 Logical Architecture
 
+
+```mermaid
 flowchart TB
     U["Data Subject / Public User"]
     C["Relying Client / Demo Application"]
@@ -185,6 +187,7 @@ flowchart TB
 
     DEV --> TEST
     TEST --> DEMO
+```
 
 The public and protected tiers form a security boundary. Public requests enter through the Azure-hosted service layer. Consent-management, administrative, persistent-data, and audit operations remain in the protected backend tier.
 
