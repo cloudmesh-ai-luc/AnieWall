@@ -33,5 +33,9 @@ ALLOW / DENY
 ```
 
 The final authorization decision remains deterministic. AI may assist with consent-language normalization or ambiguity detection, but the AI component does not independently authorize biometric-data use.
-Infrastructure Management
-The shared cmx vm framework is used as the provider and VM-management layer. It supports provider selection, VM lifecycle operations, image/flavor discovery, key-management validation, smoke testing, and cleanup evidence.
+
+### Infrastructure Management
+
+The shared `cmx vm` framework is used as the provider and VM-management layer. It supports provider selection, VM lifecycle operations, image/flavor discovery, key-management validation, smoke testing, and cleanup evidence.
+
+For the complete architecture and current implementation status, see [../project/project.md](../project/project.md).
