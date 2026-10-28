@@ -140,33 +140,34 @@ The current design assigns a distinct role to each of the three required cloud e
 
 ### 5.1 Logical Architecture
 
+
 ```mermaid
 flowchart TB
-    U[Data Subject / Public User]
-    C[Relying Client / Demo Application]
-    A[Authorized Administrator / Auditor]
+    U["Data Subject / Public User"]
+    C["Relying Client / Demo Application"]
+    A["Authorized Administrator / Auditor"]
 
     subgraph AZ["Azure - Public Cloud Tier"]
-        UI[Public Consent Web Interface]
-        API[Public Consent API]
-        AI[AI Consent-Language Normalization]
+        UI["Public Consent Web Interface"]
+        API["Public Consent API"]
+        AI["AI Consent-Language Normalization"]
     end
 
     subgraph JS["Jetstream 2 - Protected Management Tier"]
-        MS[Consent Management Service]
-        PE[Deterministic Policy / Verification Engine]
-        ADM[Administrator / Auditor Interface]
-        DB[(PostgreSQL Consent Store)]
-        LOG[(Protected Audit Store)]
+        MS["Consent Management Service"]
+        PE["Deterministic Policy / Verification Engine"]
+        ADM["Administrator / Auditor Interface"]
+        DB[("PostgreSQL Consent Store")]
+        LOG[("Protected Audit Store")]
     end
 
     subgraph MP["Multipass - Local Development Tier"]
-        DEV[Local Development]
-        TEST[Container and Smoke Testing]
-        DEMO[Client / Demo Testing]
+        DEV["Local Development"]
+        TEST["Container and Smoke Testing"]
+        DEMO["Client / Demo Testing"]
     end
 
-    CMX[cmx vm Provider and VM Management Layer]
+    CMX["cmx vm Provider and VM Management Layer"]
 
     U --> UI
     C --> API
@@ -497,7 +498,7 @@ The implementation will be evaluated through observable system behavior.
 
 The project deliverables include:
 
-- `project.md` with architecture, implementation status, issues, and evaluation criteria;
+- `project/project.md` with architecture, implementation status, issues, and evaluation criteria;
 - architecture diagram;
 - source code for consent services and client/demo application;
 - Docker configuration;
