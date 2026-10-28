@@ -30,5 +30,8 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Project: project/project.md
+  - Project Report: project/project.md
+  - Architecture: architecture.md
+  - Security and Privacy: security.md
+  - Shared Contributions: contributions.md
 
