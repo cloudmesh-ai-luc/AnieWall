@@ -14,14 +14,7 @@
 
 - **Development Environment:** The official `upstream/dev3` branch was fetched and checked out locally at commit `093e65b`. A separate Python 3.15.2 virtual environment was configured, Microsoft Visual C++ Build Tools resolved dependency compilation errors, Cloudmesh AI VM 1.9.0 installed successfully, and `pip check` reported no broken requirements. The earlier Python 3.11 environment was preserved.
 
-- **Multi-Cloud Testing and Issues:** On November 4, Multipass passed its automated lifecycle smoke test (`1 passed in 180.52s`). Jetstream and Chameleon KVM@TACC successfully completed manual VM creation, listing, stopping, deletion, and final inventory verification. Chameleon's automatically created test lease was also deleted and cleanup verified. VM Doctor returned HEALTHY for Multipass and Jetstream. Chameleon's unsupported `get_provider_info()` remains documented in [Issue #117](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/117). No non-trivial PR was submitted.
-
-- **Testing Evidence:**
-[VM Doctor](01_vm_doctor_three_clouds.png) |
-[Multipass Test](02_multipass_pytest_pass.png) |
-[Jetstream Cleanup](06_jetstream_deleted_inventory_empty.png) |
-[Chameleon Cleanup](10_chameleon_deleted_inventory_empty.png) |
-[Chameleon Lease Cleanup](12_chameleon_lease_cleanup_verified.png).
+- **Testing Evidence, Availability, and Next Actions:** Multi-cloud testing results and troubleshooting are documented in the [November 4 Multi-Cloud Verification Report](reports/2026-11-04-multicloud-verification.md). Supporting screenshots include [VM Doctor](01_vm_doctor_three_clouds.png), [Multipass Test](02_multipass_pytest_pass.png), [Jetstream Cleanup](06_jetstream_deleted_inventory_empty.png), [Chameleon VM Cleanup](10_chameleon_deleted_inventory_empty.png), and [Chameleon Lease Cleanup](12_chameleon_lease_cleanup_verified.png). Weekly testing and status updates will continue throughout the remaining course. **Availability:** [Specify actual days and approximate hours available for class and project work]. **Piazza #174 response:** [Insert direct reply link if submitted; otherwise mark pending]. Upcoming activities include lecture concept review and continued development of the Cloud-Native Biometric Consent and Audit Platform.
 
 **Detailed Report:**
 [November 4 Multi-Cloud Verification](reports/2026-11-04-multicloud-verification.md).
