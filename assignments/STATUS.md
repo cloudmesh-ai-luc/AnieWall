@@ -28,4 +28,4 @@
 - [Piazza #179 — Security Dependency Updates](https://piazza.com/class/mt5rkdsycb31c3/post/179)
 - [Piazza #180 — New dev3 Branch](https://piazza.com/class/mt5rkdsycb31c3/post/180)
 
-**Security Note:** No private SSH keys, passwords, API tokens, cloud credentials, or sensitive configuration values should be included in repository documentation, screenshots, or recordings.
+**Security Note:** No private SSH keys, passwords, API tokens, cloud credentials, or sensitive configuration values will be included in repository documentation, screenshots, or recordings.
