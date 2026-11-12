@@ -48,6 +48,9 @@ Cline was used for source-code inspection, debugging, and regression-test prepar
 
 Cline's integrated terminal execution encountered difficulties. Consequently, test results were independently verified using the functioning VS Code Git Bash terminal rather than relying on the LLM's reported outcomes.
 
+**Video Demonstration:** [Cline, Git Bash, and WSL2
+Regression Testing](reports/Cloudmesh_Demo_Condensed_REEXPORT_720p.mp4)
+
 ### Individual Project — Weekly Update
 
 **Project:** Cloud-Native Biometric Consent and Audit Platform
