@@ -5,7 +5,7 @@
 **Course:** Cloud Computing, DevOps, and AI  
 **Instructor:** Professor Gregor von Laszewski  
 **Individual Project:** Cloud-Native Biometric Consent and Audit Platform  
-**Last Updated:** November 15, 2026
+**Last Updated:** November 16, 2026
 
 ---
 
@@ -32,6 +32,68 @@ A separate Python 3.11.9 environment was retained for earlier development and ta
 **Important distinction:** The Python 3.15.2 results establish successful operation of the tested Cloudmesh workflows. They do not constitute exhaustive validation of every supported cloud provider or dependency.
 
 ---
+
+## Week of November 16–22, 2026 — Cloudmesh Verification and Chameleon Safety Improvement
+
+### Development Environment and Provider Testing
+
+The `cloudmesh-ai-vm` repository was synchronized with the official `dev3` branch. Testing was performed using Python 3.15.2.
+
+- Multipass unit tests: 8 passed.
+- Jetstream2 unit tests: 7 passed.
+- Chameleon unit tests: 5 passed.
+- OpenStack and security unit tests: 5 passed.
+- Multipass CLI smoke test: 1 passed.
+- Jetstream2 CLI smoke test: 1 passed.
+
+**Verification result:** 25 unit tests and 2 CLI smoke tests passed.
+
+The current week's live Chameleon smoke test remains pending.
+
+### Chameleon Reservation Investigation
+
+A historical KVM@TACC reservation was investigated following instructor feedback on Piazza #191.
+
+The reservation's JSON records confirmed an `ERROR` lease status and a failed `end_lease` event on November 9, 2026.
+
+The reservation's project ID matched the currently authenticated project, but its recorded user ID differed from the current authenticated identity. The configured Cloudmesh username was verified as `swallace6`.
+
+The reservation's creator and the underlying cause of the expiration failure remain unconfirmed. Supporting screenshots and JSON results were collected, and the findings were reported to the instructor.
+
+No existing reservation was modified or deleted.
+
+### LLM-Assisted Chameleon Safety Improvement — Issue #123
+
+Cline was used in VS Code to examine the Chameleon VM deletion implementation and develop an improvement plan.
+
+The investigation identified a potentially unsafe fallback in `ChameleonManager.delete()` that could select an unrelated server when the requested VM was not found.
+
+The LLM-generated recommendations were reviewed against the actual source code, and inaccuracies were identified and corrected before implementation.
+
+A local correction was developed to:
+
+- Remove the unsafe single-server deletion fallback.
+- Require unambiguous VM identification.
+- Resolve deletion targets using the server list.
+- Reject conflicting or ambiguous identifiers.
+- Prevent floating-IP release for rejected deletion targets.
+- Add mocked regression tests covering safe and unsafe deletion scenarios.
+
+**Development details**
+
+- Branch: `fix/chameleon-safe-delete-issue123`
+- Local commit: `987c3ae`
+- Python: 3.15.2
+- Modified files: 2
+- Reported Chameleon unit tests: **17 passed**
+- Git whitespace check: passed
+- Live cloud resources modified: none
+
+The broader unit-test collection encountered errors also observed against the unmodified code, according to the local A/B verification.
+
+The correction was committed locally but has not been pushed or submitted as a pull request. Coordination was initiated with the student who opened [Issue #123](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/123) to avoid duplicate work.
+
+**Status:** Local fix committed; peer coordination and pull-request submission pending.
 
 ## 2. Week of November 9–15, 2026
 
