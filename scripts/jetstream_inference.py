@@ -57,7 +57,6 @@ def main():
     if answer and answer.strip():
         print(answer)
         print("\nInference request completed successfully.")
-    
     else:
         print("(No final text returned — further diagnosis needed.)")
         raise SystemExit(1)
