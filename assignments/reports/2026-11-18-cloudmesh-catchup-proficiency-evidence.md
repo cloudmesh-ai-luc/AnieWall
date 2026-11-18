@@ -44,7 +44,7 @@ The directory was initially empty and ready to accommodate the required course r
 
 **Figure 1 — Successful creation of the class workspace**
 
-![Class directory created](evidence/Evidence_Work%20Directory_AnieWall%281%29.png)
+![Class directory created](evidence/Evidence_Work%20Directory_AnieWall.png) 
 
 ### 2.2 Cloning the Required GitHub Repositories
 
@@ -72,7 +72,7 @@ The final directory listing confirmed that all four repositories were present.
 
 **Figure 2 — SSH cloning operations and repository verification**
 
-![Required repositories cloned](evidence/Evidence_Cloned%20Required%20Repositories%281%29.png)
+![Required repositories cloned](evidence/Evidence_Cloned%20Required%20Repositories.png)
 
 ## 3. Git Bash Utilities Verification
 
@@ -136,7 +136,7 @@ GitHub returned its successful authentication message, indicating that the confi
 
 **Figure 4 — SSH-agent initialization and successful GitHub authentication**
 
-![SSH authentication verification](evidence/Evidence_SSH%20Authentication%281%29.png)
+![SSH authentication verification](evidence/Evidence_SSH%20Authentication.png)
 
 **Security considerations:** No private SSH key contents, passphrases, or authentication tokens were included in the evidence.
 
@@ -173,7 +173,7 @@ This configuration preserves the separation between the student's GitHub fork (`
 
 **Figure 5 — Cloudmesh repository configuration and terminal workflow**
 
-![Cloudmesh repository configuration](evidence/Evidence_Configuration_Cloudmesh%20VM%20Directory%281%29.png)
+![Cloudmesh repository configuration](evidence/Evidence_Configuration_Cloudmesh%20VM%20Directory.png)
 
 ### 5.2 Launching VS Code Using `code .`
 
