@@ -15,6 +15,7 @@ dev = [
     "pytest>=8",
     "black",
     "flake8",
+    "openai>=3,<4",
 ]
 
 docs = [
