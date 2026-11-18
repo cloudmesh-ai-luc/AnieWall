@@ -91,9 +91,11 @@ A local correction was developed to:
 
 The broader unit-test collection encountered errors also observed against the unmodified code, according to the local A/B verification.
 
-The correction was committed locally but has not been pushed or submitted as a pull request. Coordination was initiated with the student who opened [Issue #123](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/123) to avoid duplicate work.
+The correction was committed locally but has not been pushed or submitted as a pull request. Coordination was initiated with @Kbass who opened [Issue #123](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/123) to avoid duplicate work.
 
 **Status:** Local fix committed; peer coordination and pull-request submission pending.
+
+Pull Request Submitted — November 17, 2026: PR #132 was submitted to cloudmesh-ai/cloudmesh-ai-vm, targeting dev3. The proposed fix prevents deletion of unrelated Chameleon VMs, strengthens identifier validation, and ensures floating-IP cleanup uses the verified server identity. Final verification reported 21 passing mocked tests using Python 3.15.2. The PR remains open pending upstream review and integration.
 
 ## 2. Week of November 9–15, 2026
 
