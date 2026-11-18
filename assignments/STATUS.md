@@ -355,7 +355,7 @@ Previously completed tests remain documented as historical evidence. New weekly 
 - [GitHub Issue #99 — Python 3.11 Compatibility](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/99)
 - [GitHub Issue #109 — WSL2 Manager](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/109)
 - [GitHub Issue #117 — Chameleon Doctor](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/issues/117)
-- [Cline Demonstration](reports/Cloudmesh_Demo_Condensed_REEXPORT_720p.mp4)
+- [Cline and Git Bash Proficiency Evidence](reports/2026-11-18-cloudmesh-catchup-proficiency-evidence.md)
 - [GitHub PR #132 — Chameleon VM Deletion Safety](https://github.com/cloudmesh-ai/cloudmesh-ai-vm/pull/132)
 
 ## 7. Security and Reporting Principles
