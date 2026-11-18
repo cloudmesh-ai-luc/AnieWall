@@ -19,6 +19,8 @@ The session focused on reviewing essential development workflows, including SSH 
 
 The purpose was to reinforce practical proficiency through collaborative explanations, command-line demonstrations, and discussion of how these tools support development in the Cloudmesh environment.
 
+**Supporting PDF:** [Peer-Assisted DevOps Terminal Evidence — Ale and Annie](EVIDENCES%20-%20ALE%20%26%20ANNIE.pdf)
+
 ## 2. Development Environment
 
 The session covered the following tools and technologies:
