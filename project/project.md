@@ -1,331 +1,885 @@
 # Cloud-Native Biometric Consent and Audit Platform
 
-**Cloud Computing, DevOps, and AI · CS 388/488**
+**A Secure, Auditable, Cloud-Based Consent Management System**
 
-| Project details | Information |
-| --- | --- |
+| Project Information | Details |
+|---|---|
 | **Student** | Stephanie Wallace |
-| **Repository** | [cloudmesh-ai-luc/AnieWall](https://github.com/cloudmesh-ai-luc/AnieWall) |
+| **Course** | CS 388/488 — Cloud Computing, DevOps, and AI |
 | **Instructor** | Professor Gregor von Laszewski |
-| **Original proposal** | October 15, 2026 |
-| **Revised** | November 18, 2026 |
-| **Status** | MVP 1 implemented and locally tested; [PR #4](https://github.com/cloudmesh-ai-luc/AnieWall/pull/4) pending review |
+| **GitHub Repository** | [cloudmesh-ai-luc/AnieWall](https://github.com/cloudmesh-ai-luc/AnieWall) |
+| **Original Proposal** | October 15, 2026 |
+| **Last Revised** | November 18, 2026 |
+| **Development Status** | MVP 1 implemented and tested; subsequent milestones in development |
+| **Current Pull Request** | [PR #4 — Biometric Consent Lifecycle Engine](https://github.com/cloudmesh-ai-luc/AnieWall/pull/4) |
 
-> **Scope clarification:** Following Professor Gregor's November 15 guidance, the individual project requires **one non-local cloud**. The three-provider `cloudmesh-ai-vm` assignments remain a separate course requirement. Cloud deployment for this application has **not** yet been completed.
+---
 
-## Project at a glance
+## Project Overview
 
-| Category | Current position |
-| --- | --- |
-| **Purpose** | Translate purpose-specific biometric consent into deterministic, auditable authorization decisions |
-| **Implemented** | Python consent lifecycle engine, CLI demonstration and security tests using synthetic identifiers |
-| **Verification** | 21 consent tests; 22 total repository tests passed locally |
-| **Cloud candidate** | Chameleon, subject to availability and verified deployment |
-| **Next technical milestone** | Authenticated FastAPI endpoints and trusted identity boundary (MVP 2) |
-| **Planned** | PostgreSQL persistence, protected audit store, Docker deployment, AI suggestion adapter |
+The **Cloud-Native Biometric Consent and Audit Platform** is a security-focused application designed to demonstrate how biometric consent can be transformed from a legal or administrative record into an enforceable technical control.
 
-## Table of contents
+The platform will enable individuals to grant, verify, review, and revoke consent for specific biometric-processing purposes while generating auditable records of consent-related activities.
+
+It combines:
+
+- **Cloud Computing:** Deployment of containerized services on a non-local cloud infrastructure.
+- **DevOps:** Reproducible installation, testing, infrastructure management, version control, and deployment automation.
+- **Cybersecurity:** Authentication, authorization, least-privilege access, encryption, audit integrity, and privacy safeguards.
+- **Artificial Intelligence:** LLM-assisted interpretation of consent-related language without delegating authorization decisions to AI.
+- **Biometric Privacy Research:** Consent lifecycle management informed by privacy law, technical standards, and the Biometric Contracts research.
+
+**Current implementation:** The first executable consent-management engine has been developed and validated locally using synthetic data. Its automated tests and demonstration confirm purpose-specific authorization, revocation, and in-memory audit behavior.
+
+**Deployment clarification:** Professor Gregor's November 15 guidance requires the individual class project to run on at least one non-local cloud. The separate weekly `cloudmesh-ai-vm` assignments continue to require work across the prescribed providers.
+
+---
+
+## Table of Contents
 
 1. [Abstract](#1-abstract)
-2. [Problem and research motivation](#2-problem-and-research-motivation)
-3. [Objectives and success criteria](#3-objectives-and-measurable-success-criteria)
-4. [Users, roles and trust boundaries](#4-users-roles-and-trust-boundaries)
-5. [Consent lifecycle and demonstration](#5-consent-lifecycle-and-demonstration)
-6. [Cloud architecture](#6-revised-cloud-architecture)
-7. [Application components and repository layout](#7-application-components-and-repository-layout)
-8. [Data architecture, revocation and retention](#8-data-architecture-revocation-and-retention)
-9. [LLM integration](#9-llm-integration-and-model-safety)
-10. [Security and shared responsibility](#10-security-architecture-and-cloud-shared-responsibility)
-11. [DevOps and cmx vm integration](#11-devops-and-cmx-vm-integration)
-12. [Development milestones](#12-development-milestones-and-status)
-13. [Demonstration and acceptance](#13-demonstration-and-acceptance-plan)
-14. [Risks and constraints](#14-risks-constraints-and-open-questions)
-15. [Deliverables](#15-final-project-deliverables)
-16. [Course guidance and reference projects](#16-relationship-to-classroom-guidance-and-reference-projects)
-17. [Repository evidence](#17-repository-evidence-and-supporting-documents)
-18. [Current status and next action](#18-current-project-status-and-next-action)
+2. [Problem and Research Motivation](#2-problem-and-research-motivation)
+3. [Project Objectives](#3-project-objectives)
+4. [System Users and Roles](#4-system-users-and-roles)
+5. [Consent Lifecycle Management](#5-consent-lifecycle-management)
+6. [Cloud Architecture](#6-cloud-architecture)
+7. [Application Components and Repository Structure](#7-application-components-and-repository-structure)
+8. [Data Architecture and Consent Retention](#8-data-architecture-and-consent-retention)
+9. [LLM Integration and Model Safety](#9-llm-integration-and-model-safety)
+10. [Security Architecture and Threat Model](#10-security-architecture-and-threat-model)
+11. [Cloud Shared Responsibility and DevOps](#11-cloud-shared-responsibility-and-devops)
+12. [Implementation Roadmap](#12-implementation-roadmap)
+13. [Testing and Evaluation](#13-testing-and-evaluation)
+14. [Risks and Constraints](#14-risks-and-constraints)
+15. [Expected Deliverables](#15-expected-deliverables)
+16. [Relationship to Classroom Guidance](#16-relationship-to-classroom-guidance)
+17. [Repository Evidence and Documentation](#17-repository-evidence-and-documentation)
+18. [Current Project Status and Next Steps](#18-current-project-status-and-next-steps)
 
 ---
 
 ## 1. Abstract
 
-The **Cloud-Native Biometric Consent and Audit Platform** is a security-focused cloud application that translates a data subject's consent into a deterministic, enforceable decision for a specific simulated biometric-processing purpose. A relying client checks whether the relevant subject has **active, purpose-matching consent** before proceeding with a simulated operation. The subject may revoke consent; subsequent verification must return `DENY`. Grant, verification, denial and revocation events are recorded for audit.
+Biometric systems increasingly rely on sensitive physiological or behavioral characteristics to identify and authenticate individuals. Although consent is often obtained before collecting biometric information, many systems lack reliable mechanisms to enforce the conditions of that consent throughout the data lifecycle.
 
-This class project develops the earlier Biometric Contracts research into an executable **Cloud Computing, DevOps, and AI** demonstration. The first milestone is already implemented as a Python consent lifecycle library with a command-line demonstration, synthetic identifiers, and automated security tests. The next milestones add a trusted FastAPI authentication boundary, PostgreSQL persistence and durable audit records, Docker packaging, deployment on **one non-local cloud** (Chameleon is the current candidate, subject to successful access and provisioning), and an LLM-assisted consent-language suggestion service. **Final authorization remains rule-based**, not delegated to an LLM.
+This project develops a **Cloud-Native Biometric Consent and Audit Platform** that demonstrates how consent can be expressed, evaluated, revoked, and audited through software-enforced controls.
 
-No real biometric images, templates or identifying biometric data are required or used for this class prototype. The project demonstrates technical control patterns; it does **not** claim regulatory certification or production readiness.
+The proposed application combines a deterministic consent-management engine with authenticated interfaces, persistent storage, protected audit records, containerized deployment, and LLM-assisted interpretation of consent language.
+
+The platform will initially operate using synthetic subjects and simulated biometric-processing requests to avoid exposing real biometric information.
+
+The ultimate objective is to demonstrate that biometric consent can function as an **enforceable and auditable authorization requirement**, rather than simply a signed document or database entry.
 
 ---
 
 ## 2. Problem and Research Motivation
 
-Recording a consent statement is not the same as enforcing it. A biometric-reliant application must establish whether the requesting client is authorized, whether the subject approved the **exact purpose**, whether the consent is still active, and whether a later audit can explain the decision. Without those controls, stale permissions, unauthorized administrators, or applications requesting unrelated uses can defeat nominal consent.
+### 2.1 The Problem
 
-**Research question**
+Traditional consent management frequently emphasizes obtaining and recording an individual's consent.
+
+However, recording consent does not necessarily guarantee that a system will respect its limitations.
+
+Important questions include:
+
+- How does a system establish whether consent remains valid?
+- How can processing be restricted to the precise purpose authorized?
+- What happens when an individual withdraws consent?
+- How can unauthorized applications or administrators be prevented from bypassing consent restrictions?
+- How can consent decisions be reconstructed during an audit?
+- How should retained audit evidence be reconciled with privacy and deletion requirements?
+
+These questions are particularly important in biometric applications because compromised biometric characteristics cannot readily be replaced like passwords.
+
+### 2.2 Research Question
 
 > How can we design biometric systems in which consent is not merely documented, but translated into enforceable technical controls that remain auditable throughout the data lifecycle?
 
-The prior biometric research contributes the policy and lifecycle requirements. The course project concentrates on **service implementation, cloud deployment, infrastructure management, DevOps automation, AI integration, and demonstrable security boundaries**. Legal instruments and standards such as GDPR, BIPA, Ghana's Data Protection Act and ISO consent-record guidance inform the design discussion, but compliance cannot be established by this prototype alone.
+### 2.3 Research Foundation
+
+This project builds upon the ongoing **Biometric Contracts** research, which examines consent governance, technical enforceability, privacy safeguards, and the relationship between legal consent requirements and biometric-system implementation.
+
+Relevant regulatory and technical references include:
+
+- General Data Protection Regulation (GDPR)
+- Illinois Biometric Information Privacy Act (BIPA)
+- Ghana Data Protection Act, 2012 (Act 843)
+- ISO/IEC 27560 — Consent record information structure
+- ISO/IEC 24745 — Biometric information protection
+- ISO/IEC 23894 — Artificial intelligence risk management
+
+These references inform the system design. The educational prototype does not claim regulatory certification or complete legal compliance.
 
 ---
 
-## 3. Objectives and Measurable Success Criteria
+## 3. Project Objectives
 
-1. **Purpose-specific consent:** A synthetic subject can grant consent for an approved purpose; an unrelated purpose returns `DENY`.
-2. **Effective revocation:** A previously valid verification changes from `ALLOW` to `DENY` after subject-authorized revocation. Once persistence is introduced, this must remain true across service restart and concurrent workers.
-3. **Access control:** The service distinguishes subject, relying client, administrator and auditor privileges; administrators cannot create or restore subject consent or exploit infrastructure privileges to view protected biometric content.
-4. **Auditability:** Relevant decisions and lifecycle actions produce reviewable audit events; the later persistent implementation must resist ordinary administrator modification and define retention.
-5. **Runnable service:** A small authenticated FastAPI application exposes the tested decision engine, with separate interfaces and integration tests.
-6. **Cloud deployment:** Dockerized services operate on **at least one non-local cloud**, with reproducible provisioning, constrained network access, health checks, and cleanup evidence.
-7. **AI integration:** An LLM (Jetstream-hosted if accessible, otherwise a compatible mock for tests) suggests structured consent purposes or explains text; validated, human-confirmed structured policy remains the only source of authorization.
-8. **DevOps evidence:** Git feature branches, focused PRs, repeatable pytest runs, configuration hygiene, MkDocs and screenshots demonstrate progress.
+The project has eight primary objectives.
 
----
+| Objective | Description | Success Criterion |
+|---|---|---|
+| **Consent creation** | Allow subjects to authorize specific processing purposes | Valid purpose-specific consent is recorded |
+| **Consent verification** | Evaluate authorization before simulated processing | Deterministic `ALLOW` or `DENY` |
+| **Consent revocation** | Allow subjects to withdraw authorization | Subsequent requests are denied |
+| **Access control** | Separate subject, client, auditor, and administrator permissions | Unauthorized actions are rejected |
+| **Auditability** | Record relevant authorization and lifecycle events | Reviewable audit history |
+| **Cloud deployment** | Deploy the application on a non-local cloud | Running service with verified access and health checks |
+| **LLM integration** | Assist with interpreting consent language | Human-reviewed structured suggestions |
+| **DevOps automation** | Support reliable development and maintenance | Repeatable installation, tests, deployment, and documentation |
 
-## 4. Users, Roles, and Trust Boundaries
+The first four objectives and basic in-memory auditability are implemented in MVP 1.
 
-| Actor | Permitted actions | Explicit limits |
-| --- | --- | --- |
-| **Data subject** | Authenticate; grant/review/revoke their own purpose-bound consent | Cannot modify other subjects' records |
-| **Relying client** | Authenticate; verify only registered purposes for an authorized subject context | Cannot grant, revoke, or turn an LLM suggestion into consent |
-| **Administrator / cloud operator** | Manage deployment, service health, and restricted policy configuration | Infrastructure role must not imply access to biometric content or permission to override subject consent |
-| **Auditor** | Read approved audit metadata | Cannot create, revoke, or alter consent; cannot rewrite audit evidence |
-
-**Current limitation:** MVP 1 uses caller-created `Principal` objects for local testing. These are **not authenticated identities**. A future trusted FastAPI boundary must authenticate users and clients, derive principals server-side, enforce subject/client relationships, and reject caller-supplied role assertions. The current library must not be exposed directly as a public HTTP service.
+The remaining capabilities will be developed incrementally.
 
 ---
 
-## 5. Consent Lifecycle and Demonstration
+## 4. System Users and Roles
 
-The consent lifecycle is designed to fail closed when authorization requirements are not met.
+The platform distinguishes four principal actors.
+
+| Role | Responsibilities | Restrictions |
+|---|---|---|
+| **Data Subject** | Grant, inspect, and revoke their own consent | Cannot modify another subject's consent |
+| **Relying Client** | Verify whether a registered processing purpose is authorized | Cannot create or revoke consent |
+| **Administrator** | Maintain application services and infrastructure | Cannot override the subject's consent decisions |
+| **Auditor** | Review permitted consent and authorization events | Cannot modify consent or rewrite audit records |
+
+### 4.1 Separation of Duties
+
+The architecture separates infrastructure administration from biometric-consent authorization.
+
+For example, permission to restart a cloud virtual machine must not automatically grant permission to approve biometric processing.
+
+This distinction responds directly to Professor Gregor's concern about how administrators might exploit sensitive biometric data.
+
+### 4.2 Current Implementation Limitation
+
+MVP 1 uses programmatically created `Principal` objects to represent subjects, clients, and administrators.
+
+These objects are not yet connected to a real authentication mechanism.
+
+Therefore, **MVP 1 must not be exposed as a publicly accessible authorization API**.
+
+MVP 2 will introduce authenticated identities, trusted server-side role assignment, and subject-to-client authorization checks.
+
+---
+
+## 5. Consent Lifecycle Management
+
+Consent lifecycle management is the core functionality of the platform.
+
+### 5.1 Lifecycle Stages
+
+The proposed lifecycle consists of six stages:
+
+1. **Grant:** A subject explicitly authorizes a registered purpose.
+2. **Record:** The platform records the consent and its relevant metadata.
+3. **Verify:** A relying client requests authorization for a processing operation.
+4. **Enforce:** The system permits or denies the operation based on deterministic policy rules.
+5. **Revoke:** The subject withdraws an existing authorization.
+6. **Audit:** Authorized auditors inspect permitted records of lifecycle activities.
+
+### 5.2 Consent Enforcement Workflow
 
 ```text
-Synthetic subject authenticates (future API)
-    -> grants purpose-bound consent
-    -> relying client requests verification
-       -> approved client + same subject + active exact purpose: ALLOW
-       -> missing / wrong-purpose / revoked / unauthorized: DENY
-    -> subject revokes consent
-    -> repeat verification: DENY
-    -> auditor reviews lifecycle events
+Data Subject
+    |
+    v
+Grant Purpose-Specific Consent
+    |
+    v
+Consent Record Created
+    |
+    v
+Relying Client Requests Verification
+    |
+    v
+Consent Policy Engine
+    |
+    +-- Valid Subject and Authorized Purpose
+    |       |
+    |       v
+    |      ALLOW
+    |
+    +-- Missing, Invalid, or Revoked Consent
+            |
+            v
+           DENY
+
+Relevant actions generate audit events.
 ```
 
-The deterministic policy engine—not free-form AI text—computes authorization. The MVP demonstration uses only synthetic identifiers.
+The policy engine uses structured, deterministic authorization rules rather than relying on free-form LLM judgments.
 
-**Observed MVP 1 demonstration:**
+### 5.3 MVP 1 Demonstration Results
+
+The first executable demonstration was completed on November 18, 2026.
 
 ```text
-Approved purpose before revocation: ALLOW (active-purpose-matched)
-Different purpose: DENY (no-consent)
-Approved purpose after revocation: DENY (revoked)
+Cloud-Native Biometric Consent and Audit — MVP 1
+
+All identifiers below are synthetic;
+no biometric data is stored.
+
+Approved purpose before revocation:
+ALLOW (active-purpose-matched)
+
+Different purpose:
+DENY (no-consent)
+
+Approved purpose after revocation:
+DENY (revoked)
+
 Recorded audit events: 6
 ```
 
+This demonstrates that authorization can depend on the current consent state and the exact intended purpose.
+
 ---
 
-## 6. Revised Cloud Architecture
+## 6. Cloud Architecture
 
-### 6.1 Deployment decision
+### 6.1 Deployment Strategy
 
-**Minimum project deployment:** One non-local cloud. **Chameleon** is the preferred candidate because it supports VM-based experimentation, and Professor Gregor highlighted its Heat orchestration capabilities. Chameleon **access, resources, Heat availability and actual deployment are not yet verified for this application**. If unavailable, select another supported non-local cloud and document the reason; avoid committing to an untested second cloud.
+The initial class project will prioritize **one non-local cloud deployment**.
 
-- **Local Windows / Git Bash / VS Code:** Development, pytest, Docker builds and demonstrations; Multipass is optional for local VM experiments.
-- **Non-local cloud candidate — Chameleon:** One or more VMs running Dockerized consent API, backend datastore and protected audit functionality, with network segmentation and secured administration.
-- **Jetstream LLM:** Development and optional remote inference assistance, subject to endpoint access; it is **not** a requirement to host a second application cloud tier.
-- **`cmx vm`:** Infrastructure provisioning, inspection and cleanup where the chosen provider integration supports it. It is **not** the consent decision engine.
-- **Kubernetes / multiple application clouds / Heat templates:** Optional extensions after a stable single-cloud system; not prerequisites for MVP acceptance. Heat is evaluated, not presumed operational.
+Chameleon is the preferred candidate, subject to available resources, access permissions, and successful infrastructure validation.
 
-### 6.2 Logical architecture
+| Infrastructure | Proposed Use |
+|---|---|
+| **Local Windows environment** | Development, Git Bash, VS Code, Python tests, and debugging |
+| **Chameleon Cloud** | Preferred deployment environment for the containerized application |
+| **Docker** | Packaging the application and its supporting services |
+| **PostgreSQL** | Persistent consent and audit-related data |
+| **Jetstream LLM** | LLM-assisted development and optional consent-language interpretation |
+| **Cloudmesh `cmx vm`** | Infrastructure provisioning, inspection, and cleanup where supported |
+| **Kubernetes / Heat** | Optional extensions after a successful initial deployment |
+
+This deployment strategy reflects Professor Gregor's instruction to simplify the class project while preserving the separate multi-provider assignments.
+
+### 6.2 Proposed System Architecture
+
+The following diagram represents the **target architecture**, not a claim that every component is already operational.
 
 ```mermaid
 flowchart TB
-    S["Synthetic Data Subject"]
-    C["Registered Relying Client"]
-    AU["Auditor"]
-    OP["Infrastructure Operator"]
-    subgraph CLOUD["One non-local IaaS cloud — Chameleon candidate"]
-        GW["Authenticated FastAPI / API boundary"]
-        ENGINE["Deterministic Consent Policy Engine"]
-        DB[("PostgreSQL Consent Store — planned")]
-        AUDIT[("Protected Audit Store — planned")]
-        AI["LLM Suggestion Adapter / Mock — planned"]
-        GW --> ENGINE
+    SUBJECT["Data Subject"]
+    CLIENT["Relying Client"]
+    AUDITOR["Auditor"]
+
+    subgraph CLOUD["Non-Local Cloud — Chameleon Candidate"]
+        API["Authenticated FastAPI Service"]
+        ENGINE["Deterministic Consent Engine"]
+        DB[("PostgreSQL Consent Database")]
+        LOG[("Protected Audit Storage")]
+
+        API --> ENGINE
         ENGINE --> DB
-        ENGINE --> AUDIT
-        GW -.suggestions only.-> AI
+        ENGINE --> LOG
     end
-    S --> GW
-    C --> GW
-    AU --> GW
-    OP -."VM provisioning, logging and cleanup via cmx vm".-> CLOUD
-    DEV["Local Git Bash / VS Code / pytest / Docker"] -."test and deploy".-> CLOUD
+
+    SUBJECT --> API
+    CLIENT --> API
+    AUDITOR --> API
+
+    LLM["Jetstream LLM / Mock Adapter"]
+    API -. "Advisory suggestions only" .-> LLM
+
+    DEVOPS["Git, pytest, Docker, cmx vm"]
+    DEVOPS -. "Build, test and deploy" .-> CLOUD
 ```
 
-**Security principle:** Network access, authentication, application authorization, data storage, and audit access are separate controls. A cloud-provider security group cannot substitute for purpose checks or authenticated users.
+### 6.3 Architectural Principles
+
+The architecture will follow these principles:
+
+- Separate application authentication from infrastructure permissions.
+- Enforce consent decisions through deterministic policy rules.
+- Restrict access to persistent consent records.
+- Protect audit events from unauthorized modification.
+- Use encryption for sensitive data in transit and at rest.
+- Keep external LLM services outside the final authorization decision.
+- Use reproducible deployment and testing workflows.
 
 ---
 
-## 7. Application Components and Repository Layout
+## 7. Application Components and Repository Structure
 
-**Current repository structure:**
+### 7.1 Main Application Components
+
+The application will be organized into independently testable components.
+
+| Component | Function | Development Stage |
+|---|---|---|
+| Consent Engine | Grant, verify, and revoke consent | MVP 1 |
+| Audit Engine | Record consent and authorization events | Basic version in MVP 1 |
+| Authentication API | Verify subjects, clients, and auditors | MVP 2 |
+| Persistent Storage | Store consent and supporting metadata | MVP 3 |
+| Protected Audit Storage | Maintain durable, restricted audit records | MVP 3 |
+| Containerized Deployment | Package and deploy services | MVP 4 |
+| LLM Adapter | Interpret or suggest consent-related purpose mappings | MVP 5 |
+
+### 7.2 Repository Organization
+
+The project follows the structure recommended in the Cloud Computing and DevOps course.
 
 ```text
 AnieWall/
-├── assignments/STATUS.md       # weekly activity and evidence links
-├── project/project.md          # this proposal and truthful current status
-├── docs/                       # security, lifecycle, deployment and MkDocs
-├── src/biometric_consent/
-│   ├── consent.py              # MVP 1 deterministic in-memory engine
-│   └── demo.py                 # MVP 1 synthetic CLI walkthrough
-├── tests/test_consent.py       # MVP 1 lifecycle and security tests
-├── Makefile                    # repeatable install/test/demo/deploy targets
-├── mkdocs.yml
-└── pyproject.toml
+|
+|-- assignments/
+|   |-- STATUS.md
+|
+|-- project/
+|   |-- project.md
+|   |-- 2026-11-18-scope-and-feedback.md
+|   |-- presentation/
+|
+|-- docs/
+|   |-- mvp1-consent-lifecycle.md
+|   |-- cloud-security-shared-responsibility.md
+|
+|-- src/
+|   |-- biometric_consent/
+|       |-- consent.py
+|       |-- demo.py
+|
+|-- tests/
+|   |-- test_consent.py
+|
+|-- Makefile
+|-- mkdocs.yml
+|-- pyproject.toml
+|-- README.md
 ```
 
-Planned additions include authenticated FastAPI endpoints and schemas, persistence/repository modules, migrations, API tests, Docker/Compose configuration, cloud deployment scripts, and an isolated LLM adapter/mock. Every file will be documented as implemented or planned, rather than assumed to exist.
+Future modules will be introduced for FastAPI endpoints, database models, migrations, cloud deployment, and LLM integration.
+
+The `cloudmesh-ai-llm-mock` project provides a reference for mocking an external service and testing behavior without requiring a live cloud model.
 
 ---
 
-## 8. Data Architecture, Revocation and Retention
+## 8. Data Architecture and Consent Retention
 
-**MVP 1 implemented:** In-memory consent records with subject identifier, consent ID, exact purpose, state, timestamps, and sequential in-process audit events. No real biometric content is stored. All state and logs are lost when the Python process exits.
+### 8.1 Current Implementation
 
-**Planned PostgreSQL design:** Normalize subjects, registered clients, consent grants, revocations, purpose policy, and audit metadata. Use constraints and transactions so revocation cannot race with verification; design read consistency and cache invalidation across replicas. Provide schema migrations, restricted database roles, backup and restore tests, and explicit retention/deletion policies. Keep any synthetic biometric references separate from consent metadata.
+MVP 1 stores consent records and audit events in memory.
 
-Revocation must block future use without pretending that audit evidence can always be deleted immediately: define privacy-preserving retention and restricted access for records necessary to establish that revocation occurred.
+Each consent record represents information such as:
+
+- Consent identifier
+- Synthetic subject identifier
+- Approved purpose
+- Consent status
+- Relevant timestamps
+- Associated lifecycle events
+
+All records are lost when the application process terminates.
+
+No real biometric images, fingerprints, facial templates, or iris templates are stored.
+
+### 8.2 Planned Persistent Storage
+
+MVP 3 will introduce PostgreSQL for persistent consent records.
+
+The planned database design will support:
+
+- Subject and relying-client references
+- Registered processing purposes
+- Consent grants and revocations
+- Controlled access to audit metadata
+- Database role separation
+- Schema migrations and backup procedures
+- Consistent authorization decisions across service restarts
+
+### 8.3 Revocation and Retention
+
+Revocation must prevent further authorized processing under the withdrawn consent.
+
+However, audit evidence may need to be preserved for accountability and dispute resolution.
+
+The design must therefore distinguish between:
+
+1. Data that should no longer be processed after revocation.
+2. Data that must be deleted under applicable retention requirements.
+3. Limited audit evidence that may need to be retained under a lawful and documented retention policy.
+
+Access to retained audit records must remain restricted.
 
 ---
 
 ## 9. LLM Integration and Model Safety
 
-The AI component may assist with:
+### 9.1 Role of Artificial Intelligence
 
-- suggesting a controlled purpose identifier from human-readable consent text;
-- detecting ambiguity or missing limits;
-- proposing documentation, tests or code improvements for human review;
-- explaining a denial without disclosing protected consent metadata.
+The LLM will support the application through advisory functions such as:
 
-**The model never grants consent or returns the final authorization decision.** A human must confirm any proposed purpose/consent mapping; the deterministic engine then validates approved identifiers, subject action, and current state.
+- Identifying possible consent purposes from natural-language statements.
+- Highlighting ambiguous or incomplete consent descriptions.
+- Suggesting clearer consent wording.
+- Explaining authorization outcomes in understandable language.
+- Supporting code review, testing, and documentation development.
 
-Use the Jetstream LLM integration demonstrated in Cline and Python where available. The `cloudmesh-ai-llm-mock` repository is a useful reference for an **independently testable mock service**. Tests must not depend on a live API key, endpoint, or cloud model. Record model limitations, incorrect suggestions, review decisions and examples using synthetic text only.
+### 9.2 Authorization Boundary
 
----
+**The LLM will not independently grant, revoke, or approve biometric consent.**
 
-## 10. Security Architecture and Cloud Shared Responsibility
+Its outputs must be validated before being incorporated into structured policy records.
 
-Drawing on Professor Abuhamad's cloud-security lecture—especially **security groups (slide 61)** and the **Cloud Responsibility Matrix (slide 63)**—the external infrastructure provider is responsible for its physical facilities and underlying hardware, while the application developer remains responsible for the guest OS, deployed containers, authentication, access controls, secure storage, application code, and appropriately configured network policies.
+The final authorization decision remains the responsibility of the deterministic consent engine.
 
-| Threat / misuse | Control and verification target |
-| --- | --- |
-| Administrator grants consent without subject | Denied by application policy; explicit negative tests; no administrator grant endpoint |
-| Administrator reads or revokes another subject | Separation of duties and authorization checks; audit access scoped by role |
-| Fake subject or client identity | Trusted authentication, server-derived principal, signed tokens/sessions, subject-client relationship checking |
-| Wrong purpose / LLM hallucination | Exact controlled identifiers and deterministic `DENY`; LLM cannot authorize |
-| Revoked consent still used | Current-state check and durable transactional revocation; tests after restart and across workers |
-| Audit tampering | Restricted writer, protected append-only records, integrity verification, monitored retention |
-| Credential leakage | Secrets outside GitHub and source control; protected `~/.config/...` or cloud-managed secrets; key rotation |
-| Traffic interception / public database | TLS, narrowly scoped security groups/firewall rules, private DB exposure only |
-| Data loss | Backups, restore testing, migrations, recovery procedure and documented deletion-versus-retention rules |
-| Dependency or supply-chain compromise | Isolated virtual environments, pinned/reviewed dependencies, CI tests, dependency and secret scans |
+### 9.3 Mock Service Integration
 
-**Never commit:** `.env` files, cloud credentials, API tokens, SSH private keys, biometric images or real subject data. Infrastructure credentials and application secrets must use protected configuration, not hard-coded project values. Current MVP 1 security rules do **not** make the library production secure; authenticated API boundaries and durable storage remain to be built.
+The Cloudmesh LLM mock-service approach will guide the design of a predictable testing environment.
 
----
+This is important because tests should remain reproducible even when a live model endpoint is unavailable.
 
-## 11. DevOps and `cmx vm` Integration
+The implementation will compare expected structured results against model-generated suggestions and document any errors requiring human correction.
 
-The project uses reproducible Git Bash, Python 3.11, an isolated virtual environment, version-controlled Markdown documentation, `pytest`, small feature branches and PR review. The local work begins with `python -m pip install -e '.[dev]'`, `python -m pytest -q`, and `python -m biometric_consent.demo`.
+### 9.4 Current Progress
 
-After containerization, the deployment workflow will include build, configuration validation, health checks, API smoke tests, network checks, secure provisioning/teardown and screenshots. GitHub Actions CI is a planned extension to run tests and safe static checks on each PR; deployment secrets will not be available to untrusted PR code.
+Jetstream LLM inference has already been demonstrated in separate course activities using Cline and Python.
 
-**Separate course track:** The weekly `cloudmesh-ai-vm` assignments continue multi-provider development/testing on their prescribed branch (`dev3`), with LLM-assisted review. These are reported independently in `assignments/STATUS.md`. They are not evidence that the biometric application has already been deployed on all three clouds.
+However, the LLM has not yet been integrated into the biometric consent application.
+
+That integration remains a future milestone.
 
 ---
 
-## 12. Development Milestones and Status
+## 10. Security Architecture and Threat Model
 
-| Milestone | Work and deliverable | Status at November 18, 2026 |
-| --- | --- | --- |
-| **MVP 1 — Deterministic consent engine** | Purpose-limited grants, verification, revoke, audit events, negative tests and CLI demo | **Completed locally:** 21 consent tests passed; **22** total repository tests passed; expected ALLOW/DENY and six-event demo observed. Published on feature branch; PR #4 is open, not merged |
-| **MVP 2 — Authenticated FastAPI** | Server-side identity, client/subject binding, separate endpoints, strict schemas, API tests | **Not started** |
-| **MVP 3 — PostgreSQL + durable audit** | Schema/migrations, transactional revocation, audit protection, backup and recovery | **Not started** |
-| **MVP 4 — Docker + non-local deployment** | Container(s), network/security groups, one non-local cloud, `cmx vm` evidence, cleanup | **Not started; Chameleon candidate** |
-| **MVP 5 — LLM + mock adapter** | Jetstream/model suggestion interface, deterministic mock tests, human review, no AI authorization | **Planned**; Jetstream inference has been demonstrated in a separate course activity, not yet integrated into this consent app |
-| **MVP 6 — Final evidence and presentation** | Architecture diagram, GitHub PRs, runbook, MkDocs, terminal screenshots, failure cases and limitations | **Planned** |
+Security is a central requirement because biometric consent systems may ultimately protect highly sensitive personal information.
 
-The earlier broad Azure + Jetstream protected tier + Kubernetes architecture is retained only as a **possible future research extension**, not as a completed or required course-project deployment.
+The project will apply a defense-in-depth approach.
 
----
+### 10.1 Security Objectives
 
-## 13. Demonstration and Acceptance Plan
+The system will be designed to provide:
 
-The final live demonstration should show:
+- Identity authentication
+- Role-based authorization
+- Least-privilege access
+- Purpose-specific processing restrictions
+- Secure credential management
+- Protected consent records
+- Encryption in transit and at rest
+- Audit logging and integrity safeguards
+- Revocation enforcement
+- Secure deployment configuration
+- Dependency and code security checks
 
-1. A synthetic subject grants consent for an exact purpose.
-2. A registered client receives `ALLOW`.
-3. An unrelated or unauthorized purpose receives `DENY`.
-4. After subject-initiated revocation, the client receives `DENY`.
-5. An infrastructure administrator cannot bypass consent controls.
-6. An authorized auditor can view permitted audit events.
-7. Persisted data and revocation survive a restart after MVP 3.
-8. The Dockerized service runs on a non-local cloud after MVP 4.
-9. An LLM-generated suggestion is reviewed rather than executed directly after MVP 5.
+### 10.2 Threat Model
 
-Each result should have a reproducible command, test assertion, terminal screenshot or documentation link. Mark pending demonstrations honestly until observed on the actual deployment.
+| Threat | Proposed Mitigation |
+|---|---|
+| Unauthorized consent creation | Subject authentication and server-side authorization |
+| Administrator consent override | Separation of duties and explicit authorization restrictions |
+| Unauthorized access to subject records | Least-privilege roles and restricted database access |
+| Processing for unapproved purposes | Exact purpose matching and default denial |
+| Continued processing after revocation | Current-state verification and transactional revocation |
+| Audit-log manipulation | Restricted writers, integrity checks, and protected storage |
+| Credential exposure | Secret management outside source control |
+| Network interception | TLS and appropriately configured cloud security groups |
+| LLM hallucination or manipulation | Structured validation and deterministic authorization |
+| Insecure deployment | Container hardening, restricted interfaces, and automated security tests |
 
----
+### 10.3 Administrator Access and Biometric Protection
 
-## 14. Risks, Constraints, and Open Questions
+An important design concern raised by Professor Gregor is whether an administrator could exploit privileged infrastructure access to obtain biometric information.
 
-- **Chameleon availability:** Verify account access, project/lease validity, provider image, VM limits and whether Heat is usable; choose a supported fallback if not.
-- **Cloud cost and resources:** Prefer a modest deployment that can be torn down reliably; do not require Kubernetes for an otherwise complete single-cloud demo.
-- **Authentication:** Do not expose MVP 1 to untrusted HTTP requests until identities are verified and role/subject relationships are enforced.
-- **Revocation consistency:** Define behavior under concurrency, restarts and cached decisions before claiming durable enforcement.
-- **Audit integrity:** Design protected append-only retention and tamper-evidence, distinguishing it from ordinary log statements.
-- **Admin abuse:** Demonstrate controls at both application and infrastructure privilege boundaries.
-- **AI errors:** Validate all outputs; separate advisory language assistance from deterministic authorization.
-- **Legal/ethical scope:** Synthetic-only demonstration; GDPR/BIPA/Ghana DPA/ISO references guide design, not proof of compliance.
+The system will address this through:
 
----
+- Separation of infrastructure and application responsibilities.
+- Restricted database access.
+- Encryption and key-management controls.
+- Minimal exposure of sensitive information.
+- Audit trails for privileged operations.
+- Explicit denial of administrator consent overrides.
+- Additional infrastructure-level restrictions where technically feasible.
 
-## 15. Final Project Deliverables
+**Important limitation:** Application-level authorization alone cannot guarantee protection against a fully privileged infrastructure administrator. Stronger protections require careful key management, infrastructure isolation, and an explicit trust model.
 
-- Updated `project/project.md` and architectural diagram reflecting actual cloud scope.
-- Executable consent service, relying-client demonstration and test suite.
-- Authenticated API and PostgreSQL persistence with audit safeguards (when implemented).
-- Docker images/Compose configuration and a **single non-local cloud** deployment runbook and validation evidence.
-- LLM integration with a mock testing path and clear human-approval boundary.
-- `README.md`, MkDocs technical documentation, security responsibilities and threat model.
-- Development history through Git feature branches/PRs, reproducible tests, terminal screenshots and `assignments/STATUS.md` updates (no video needed for this project evidence package).
-- Final presentation with architecture, implementation results, limitations, and comparison of planned versus completed milestones.
+### 10.4 Secret Management
 
----
+Credentials must not be stored in GitHub or embedded directly in source code.
 
-## 16. Relationship to Classroom Guidance and Reference Projects
+The application will use appropriately protected local configuration under `~/.config/...` or a cloud-managed secrets mechanism.
 
-- **Professor Gregor's November 15 Piazza clarification:** One non-local cloud for the individual project; three selected providers remain in the weekly VM assignment track.
-- **Professor Gregor's midterm notes:** Prefer a demonstrable working system, discuss administrator misuse, explain how the LLM helped and validate model outputs; Chameleon Heat is an option to investigate.
-- **Professor Abuhamad's Week 10 cloud security:** Shared-responsibility matrix and network security groups inform boundaries; cloud infrastructure controls do not replace application permissions.
-- **Kbass project:** Reference for modular organization, incremental working deliverables and clear implementation status.
-- **Sam Stewart project:** Reference for polished architecture, explicit objectives, acceptance criteria, security and deployment evidence. Our source code and design remain independent.
-- **Cloudmesh mock service:** Reference for local/mock behavior and deterministic offline testing of LLM-integrated components.
+Private keys, API tokens, `.env` files containing secrets, and real biometric data must never be committed.
 
 ---
 
-## 17. Repository Evidence and Supporting Documents
+## 11. Cloud Shared Responsibility and DevOps
 
-- [MVP 1 pull request #4](https://github.com/cloudmesh-ai-luc/AnieWall/pull/4)
-- [MVP 1 executable lifecycle documentation](../docs/mvp1-consent-lifecycle.md)
-- [Cloud security responsibilities and threat model](../docs/cloud-security-shared-responsibility.md)
-- [November 18 professor feedback and milestone decision record](2026-11-18-scope-and-feedback.md)
-- [Course progress log](../assignments/STATUS.md)
-- [Cloud Computing assignment references](https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/lecture/assignments/ideas/)
+### 11.1 Cloud Shared Responsibility
+
+Professor Abuhamad's Cloud Security lecture introduced the division of responsibilities between cloud infrastructure providers and application developers.
+
+For the proposed IaaS deployment, the responsibilities can be summarized as follows.
+
+| Responsibility | Infrastructure Provider | Application Developer |
+|---|---|---|
+| Physical data-center security | Primary responsibility | No direct control |
+| Underlying physical hardware | Primary responsibility | No direct control |
+| Guest operating system | Limited provider support | Configuration and hardening |
+| Application code | Not responsible | Primary responsibility |
+| User authentication | Not responsible for custom application users | Primary responsibility |
+| Consent enforcement | Not responsible | Primary responsibility |
+| Data access controls | Shared underlying capabilities | Policy design and implementation |
+| Network security groups | Provides mechanisms | Configures required restrictions |
+| Application audit records | Provides infrastructure capabilities | Implements and protects records |
+| Secret and encryption-key management | May provide services | Responsible for correct application use |
+
+These responsibilities must be checked against the actual chosen cloud service and deployment model.
+
+### 11.2 DevOps Workflow
+
+The development process will use:
+
+- Git and GitHub for version control.
+- Feature branches and pull requests for controlled changes.
+- Python virtual environments for dependency isolation.
+- `pytest` for repeatable automated tests.
+- Makefiles for standardized development commands.
+- Docker for deployment packaging.
+- Cloudmesh tooling for supported infrastructure lifecycle activities.
+- MkDocs for technical documentation.
+- Screenshots and terminal evidence for demonstrations.
+
+### 11.3 Current Local Verification Commands
+
+```bash
+cd ~/work/AnieWall
+
+source .venv/Scripts/activate
+
+python -m pip install -e '.[dev]'
+
+python -m pytest -q
+
+python -m biometric_consent.demo
+
+python -m pip check
+```
+
+### 11.4 Separate Cloudmesh VM Assignments
+
+Weekly `cloudmesh-ai-vm` development tasks remain distinct from this project.
+
+Those tasks continue to involve provider development, testing, LLM-assisted review, and cross-provider regression verification on the required development branch.
+
+Completing those assignments does not establish that the biometric application has already been deployed to those cloud providers.
 
 ---
 
-## 18. Current Project Status and Next Action
+## 12. Implementation Roadmap
 
-As of **November 18, 2026**, the deterministic consent engine has passed the targeted **21 tests** and the full **22-test** repository suite in the student's local environment; its synthetic demonstration produced the expected permission and revocation decisions. The changes are in **PR #4**, pending merge. No authenticated API, PostgreSQL-backed consent store, durable tamper-resistant audit store, Dockerized cloud deployment or integrated consent-language LLM service should be represented as complete.
+Development will follow six incremental milestones.
 
-**Next action:** Review this revised proposal as part of the same feature branch, verify the documentation accurately distinguishes completed and planned work, then review and merge PR #4 when ready. Begin MVP 2 on its own focused branch after MVP 1 has been integrated.
+| Milestone | Deliverable | Current Status |
+|---|---|---|
+| **MVP 1** | Deterministic Consent Lifecycle Engine | Completed locally; PR #4 open |
+| **MVP 2** | Authenticated FastAPI Consent Service | Not started |
+| **MVP 3** | PostgreSQL Persistence and Protected Audit Storage | Not started |
+| **MVP 4** | Docker and Non-Local Cloud Deployment | Not started |
+| **MVP 5** | LLM Consent-Language Adapter and Mock Service | Planned |
+| **MVP 6** | Final Documentation, Security Evaluation, and Presentation | Planned |
+
+### MVP 1 — Consent Lifecycle Engine
+
+**Completed:**
+
+- Consent creation and verification
+- Exact-purpose authorization
+- Consent revocation
+- Basic access restrictions
+- In-memory audit events
+- Automated lifecycle tests
+- Executable synthetic-data demonstration
+
+**Verified results:** 21 consent-specific tests and 22 total project tests passed locally.
+
+### MVP 2 — Authenticated FastAPI Service
+
+**Planned implementation:**
+
+- API endpoints for consent grant, verification, and revocation
+- Authentication of subjects and relying clients
+- Trusted server-side role assignment
+- Subject-to-client authorization checks
+- Request validation and structured error responses
+- API integration and security tests
+
+### MVP 3 — Persistent Data and Audit System
+
+**Planned implementation:**
+
+- PostgreSQL database
+- Schema migrations
+- Transactional revocation
+- Protected audit storage
+- Database access restrictions
+- Persistence and recovery testing
+
+### MVP 4 — Cloud Deployment
+
+**Planned implementation:**
+
+- Docker packaging
+- Deployment to one non-local cloud
+- Secure network configuration
+- Health and connectivity checks
+- Infrastructure provisioning and cleanup
+- Deployment screenshots and documentation
+
+### MVP 5 — LLM Integration
+
+**Planned implementation:**
+
+- Jetstream-compatible inference adapter
+- Mock-service implementation for testing
+- Consent-language interpretation
+- Structured output validation
+- Human confirmation of suggested purposes
+- Security and failure-mode evaluation
+
+### MVP 6 — Final Demonstration and Documentation
+
+**Planned implementation:**
+
+- Complete architecture documentation
+- Test and evaluation results
+- Threat-model review
+- Cloud deployment evidence
+- Final presentation
+- Reproducible installation and demonstration guide
+- Known limitations and future research directions
+
+---
+
+## 13. Testing and Evaluation
+
+The project will combine automated testing, negative security cases, and live demonstrations.
+
+### 13.1 MVP 1 Test Results
+
+| Test Category | Verified Result |
+|---|---|
+| Consent grant and verification | Passed |
+| Unapproved purpose denial | Passed |
+| Revocation enforcement | Passed |
+| Unauthorized-client restrictions | Passed |
+| Administrator restrictions | Passed |
+| Audit-event generation | Passed |
+| Consent-specific automated tests | **21 passed** |
+| Full project regression tests | **22 passed** |
+| Dependency verification | No broken requirements found |
+
+These results were observed locally on November 18, 2026.
+
+### 13.2 Future Integration Tests
+
+Later milestones will test:
+
+- Authentication failures
+- Cross-subject authorization attempts
+- API input validation
+- Concurrent consent updates
+- Persistence after application restart
+- Database access restrictions
+- Audit integrity
+- Cloud connectivity and service health
+- Recovery after service interruption
+- LLM error handling and invalid suggestions
+
+### 13.3 Final Demonstration Acceptance Criteria
+
+The final system should demonstrate that:
+
+1. A subject grants consent for a registered purpose.
+2. An authorized client receives `ALLOW`.
+3. An unrelated purpose receives `DENY`.
+4. The subject revokes previously granted consent.
+5. Subsequent verification returns `DENY`.
+6. Unauthorized administrators cannot change consent through the application.
+7. Authorized auditors can inspect permitted audit events.
+8. Persistent consent state survives application restart.
+9. The application runs on a non-local cloud.
+10. LLM output remains advisory and cannot override consent policy.
+
+Each result should be supported by code, tests, screenshots, or a documented demonstration.
+
+---
+
+## 14. Risks and Constraints
+
+| Risk or Constraint | Planned Response |
+|---|---|
+| Limited cloud resources | Prefer a modest single-cloud deployment |
+| Chameleon access or lease limitations | Validate access early and document an approved alternative |
+| Security complexity | Implement controls incrementally with negative tests |
+| Administrator privilege abuse | Define explicit trust boundaries and evaluate infrastructure access |
+| Persistent-data consistency | Test transactions, revocation, and recovery |
+| Sensitive information exposure | Use synthetic data and restrictive access controls |
+| LLM inaccuracies | Validate outputs and require human confirmation |
+| Dependency conflicts | Use isolated environments and dependency checks |
+| Deployment failures | Maintain reproducible procedures and cleanup commands |
+| Time constraints | Prioritize an executable, secure core over unnecessary infrastructure complexity |
+
+The final implementation will clearly distinguish verified capabilities from proposed future work.
+
+---
+
+## 15. Expected Deliverables
+
+The completed class project is expected to include:
+
+- A functioning biometric consent-management application.
+- Authenticated consent-management interfaces.
+- Persistent consent and audit-related data storage.
+- Security and privacy architecture documentation.
+- A containerized deployment on one non-local cloud.
+- An LLM-assisted component with independent mock testing.
+- Automated tests and reproducible execution commands.
+- GitHub commits and development history.
+- MkDocs documentation and system diagrams.
+- Terminal screenshots showing functional and security verification.
+- A final project presentation with implementation results and limitations.
+
+Videos are not required for the current screenshot-based project evidence plan unless Professor Gregor provides a separate instruction.
+
+---
+
+## 16. Relationship to Classroom Guidance
+
+This project incorporates relevant academic and technical feedback from multiple sources.
+
+### Professor Gregor von Laszewski — Cloud Computing and DevOps
+
+Key guidance incorporated:
+
+- Prioritize a working executable application.
+- Use a single non-local cloud for the individual project.
+- Continue the separate multi-provider VM assignments.
+- Demonstrate LLM integration and review model-generated suggestions.
+- Explain how administrators might exploit sensitive information.
+- Use modular architecture, clear documentation, and reproducible development processes.
+- Consider Chameleon and Heat orchestration where appropriate, without assuming they are required or available.
+
+### Professor Abuhamad — Computer and Cloud Security
+
+Relevant concepts include:
+
+- Cloud shared responsibility
+- Network security groups
+- Least-privilege access
+- Defense in depth
+- Identity and access management
+- Secure infrastructure configuration
+- Encryption and key management
+- Security monitoring and auditability
+
+### Kbass Project Reference
+
+The Kbass repository provides useful examples of:
+
+- Modular project organization
+- Incremental development
+- Clear documentation
+- Working implementation evidence
+- Repeatable technical workflows
+
+Reference: [Kbass Project](https://github.com/cloudmesh-ai-luc/kbass/tree/main/project)
+
+### Sam Stewart Project Reference
+
+Sam Stewart's project provides examples of:
+
+- Clear presentation structure
+- Explicit technical objectives
+- Architecture communication
+- Implementation milestones
+- Acceptance criteria
+- Security and deployment evidence
+
+Reference: [Sam Stewart Project](https://github.com/cloudmesh-ai-luc/sstewart/tree/main/project)
+
+These projects serve as structural and presentation references. The biometric platform maintains its own independent research objectives, architecture, and source code.
+
+---
+
+## 17. Repository Evidence and Documentation
+
+### Implementation and Project Records
+
+| Resource | Description |
+|---|---|
+| [PR #4 — Consent Lifecycle MVP 1](https://github.com/cloudmesh-ai-luc/AnieWall/pull/4) | First executable consent-management implementation |
+| [Consent Lifecycle Documentation](../docs/mvp1-consent-lifecycle.md) | MVP 1 behavior and verification |
+| [Cloud Security Documentation](../docs/cloud-security-shared-responsibility.md) | Shared-responsibility model and security considerations |
+| [Project Scope and Feedback](2026-11-18-scope-and-feedback.md) | November 18 development decisions |
+| [Assignment Status](../assignments/STATUS.md) | Course activities, progress, and evidence |
+| [Main Repository](https://github.com/cloudmesh-ai-luc/AnieWall) | Project code and development history |
+
+### Relevant Course Resources
+
+- [Cloudmesh Assignment and Project Notes](https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/lecture/assignments/assignment-rest/)
+- [Cloudmesh Lecture Resources](https://cloudmesh-ai.github.io/cloudmesh-ai-lecture/)
+- [Piazza — Main Assignment](https://piazza.com/class/mt5rkdsycb31c3/post/191)
+- [Piazza — Jetstream LLM Setup](https://piazza.com/class/mt5rkdsycb31c3/post/149)
+- [Piazza — Smoke Testing](https://piazza.com/class/mt5rkdsycb31c3/post/155)
+
+---
+
+## 18. Current Project Status and Next Steps
+
+### 18.1 Current Status — November 18, 2026
+
+The first executable milestone of the Cloud-Native Biometric Consent and Audit Platform has been completed and tested locally.
+
+**Confirmed achievements:**
+
+- Python consent lifecycle engine implemented.
+- Purpose-specific authorization demonstrated.
+- Consent revocation enforced in the local prototype.
+- Basic administrator and client restrictions tested.
+- In-memory audit events recorded.
+- 21 consent-specific tests passed.
+- 22 total project tests passed.
+- Python development environment verified.
+- Initial security and project documentation prepared.
+- MVP 1 published through GitHub PR #4.
+
+### 18.2 Immediate Next Steps
+
+1. Review and merge MVP 1 through PR #4.
+2. Synchronize the local development repository.
+3. Update `assignments/STATUS.md` with the implementation milestone.
+4. Create a separate feature branch for MVP 2.
+5. Develop the authenticated FastAPI consent-management service.
+6. Add API-level security and authorization tests.
+7. Continue documentation and milestone verification.
+8. Prepare the application for persistent storage and eventual cloud deployment.
+
+### 18.3 Long-Term Research Direction
+
+The broader research objective is to demonstrate how consent governance can be embedded within biometric systems through enforceable, privacy-aware, and auditable technical controls.
+
+Beyond the class project, future work may investigate:
+
+- Standards-based consent interoperability.
+- Verifiable consent and revocation records.
+- Privacy-preserving biometric references.
+- Policy enforcement across distributed services.
+- Cryptographic audit integrity.
+- Administrator-resistant architectures.
+- Consent enforcement across multiple cloud environments.
+
+The class project provides an executable technical foundation for these longer-term investigations.
+
+---
+
+**Project Status:** MVP 1 completed locally; subsequent milestones planned.
+
+**Next Development Milestone:** MVP 2 — Authenticated FastAPI Consent Management Service.
+
+**Repository:** [cloudmesh-ai-luc/AnieWall](https://github.com/cloudmesh-ai-luc/AnieWall)
